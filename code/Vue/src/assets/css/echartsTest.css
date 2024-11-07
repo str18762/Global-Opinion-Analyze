@@ -1,0 +1,25 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+/* 主体 */
+.content {
+    color: #fff;
+    background: #000;
+    width: 100vw;
+    height: 100vh;
+}
+.bg {
+
+    background-size: cover;
+}
+.module_box {
+    display: flex;
+    justify-content: space-between;
+    margin: 5px;
+}
+.border-box-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

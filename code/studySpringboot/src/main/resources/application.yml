@@ -1,0 +1,32 @@
+# 应用服务 WEB 访问端口
+server:
+  port: 7001
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${ip}:3306/ie2024?useSSL=true
+    username: root
+    password: 123456
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        #更新或者创建数据表结构
+        ddl-auto: update
+        format_sql: true
+      #控制台显示SQL
+      show-sql: true
+  neo4j:
+    uri: bolt://localhost:7687
+    authentication:
+      username: neo4j
+      password: 12345678
+  data:
+    neo4j:
+      database: neo4j
+ip: localhost
