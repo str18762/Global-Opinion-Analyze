@@ -12,6 +12,7 @@ spring:
     multipart:
       max-file-size: 20MB
       max-request-size: 20MB
+
   jpa:
     show-sql: true
     properties:
