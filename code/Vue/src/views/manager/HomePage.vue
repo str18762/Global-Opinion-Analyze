@@ -1,6 +1,7 @@
 <template>
   <div class="home-page">
     <!-- 轮播图 -->
+
     <el-carousel height="300px">
       <el-carousel-item v-for="(item, index) in carouselItems" :key="index" >
         <img @click="bbc_News(item)" :src="item.img" alt="轮播新闻动态" class="carousel-image">
