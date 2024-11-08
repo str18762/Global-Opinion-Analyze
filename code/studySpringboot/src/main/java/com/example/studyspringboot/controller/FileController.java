@@ -35,7 +35,7 @@ public class FileController {
     String port;
 
     private static final String ROOT_PATH = System.getProperty("user.dir")+
-            File.separator+"files";
+            File.separator+ "static/files";
 
     @Autowired
     private FileService fileService;
@@ -97,7 +97,7 @@ public class FileController {
         if(user==null){
             return Result.error("请先登录");
         }
-        Result result = upload(image,"snapshot");
+        Result result = upload(image, "static/snapshot");
         fileService.saveSnapshot(user.getUsername(),(String) result.getData());
         return Result.success("快照保存成功",result.getData());
     }

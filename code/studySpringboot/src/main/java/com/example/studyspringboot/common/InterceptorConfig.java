@@ -11,7 +11,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
-@Configuration
+//@Configuration
 public class InterceptorConfig extends WebMvcConfigurationSupport {
     /*@Override
     protected void addInterceptors(InterceptorRegistry registry) {
