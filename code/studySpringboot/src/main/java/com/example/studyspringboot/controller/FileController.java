@@ -35,7 +35,7 @@ public class FileController {
     String port;
 
     private static final String ROOT_PATH = System.getProperty("user.dir")+
-            File.separator+ "static/files";
+            File.separator+ "files";
 
     @Autowired
     private FileService fileService;

@@ -22,6 +22,11 @@ public class StudentController {
     @Autowired
     private StudentService studentService;
 
+    /**
+     * 插入学生信息
+     * @param student 要插入的学生对象
+     * @return 插入结果
+     */
     @PostMapping("/add")
     public Result add(@RequestBody Student student) {
         try {
@@ -37,7 +42,9 @@ public class StudentController {
     }
 
     /**
-     * @param
+     * 删除学生信息
+     * @param sno 学生编号
+     * @return 删除结果
      */
     @DeleteMapping("/delete/{sno}")
     public Result delete(@PathVariable String sno) {
@@ -54,7 +61,9 @@ public class StudentController {
     }
 
     /**
-     * 修改数据，只允许根据用户ID修改密码（目前）
+     * 修改学生信息，目前只允许修改密码
+     * @param student 包含新密码的学生对象
+     * @return 修改结果
      */
     @PutMapping("/update")
     public Result update(@RequestBody Student student) {
@@ -70,6 +79,10 @@ public class StudentController {
         return Result.success("200", "修改成功", student.getSno());
     }
 
+    /**
+     * 查询所有学生信息
+     * @return 学生信息列表
+     */
     @GetMapping("/selectAll")
     public Result selectAll() {
         List<Student> students = studentService.selectAll();
@@ -77,7 +90,9 @@ public class StudentController {
     }
 
     /**
-     * 通过用户ID或用户名来查找唯一用户（ID和用户名都是该用户的唯一标识）
+     * 通过学生编号查询学生信息
+     * @param sno 学生编号
+     * @return 学生信息
      */
     @GetMapping("/selectBySno/{sno}")
     public Result selectBySno(@PathVariable String sno) {
@@ -85,6 +100,11 @@ public class StudentController {
         return Result.success("查询成功", theSno);
     }
 
+    /**
+     * 通过学生姓名查询学生信息
+     * @param sname 学生姓名
+     * @return 学生信息
+     */
     @GetMapping("/selectBySname/{sname}")
     public Result selectBySname(@PathVariable String sname) {
         Student theSname = studentService.selectBySname(sname);

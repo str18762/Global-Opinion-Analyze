@@ -20,11 +20,6 @@ export default {
       required: true,
       default: () => [],
     },
-    name: {
-      type: String,
-      required: true,
-      default: 'Unknown'
-    },
   },
   mounted() {
     this.drawChart()
