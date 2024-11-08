@@ -289,7 +289,7 @@ export default {
       if(!node.data.id){
         return;
       }
-      const query = 'match(n:chara)-[r:`关注`]->(m:chara) where n.id=' + node.data.id +' return n,r,m'
+      const query = 'match(n:chara)-[r:`关注`]->(m:chara) where id(n)=' + node.data.id +' return n,r,m'
       console.log("更新query",query)
       // 更新节点数据
       this.updateChart(query);
