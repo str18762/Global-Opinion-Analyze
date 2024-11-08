@@ -206,11 +206,6 @@ export default {
         }
       })
     },
-    handleImageError(event, character) {
-      // 确保图片加载失败时替换为默认图片
-      character.displayPhoto = this.defaultAvatar;
-      event.target.src = this.defaultAvatar;
-    },
     handleSearch() {
       this.filterCharacters();
     },

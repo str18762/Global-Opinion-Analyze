@@ -7,9 +7,10 @@
             <el-card class="box-card menu-card">
               <!-- 用 el-scrollbar 包裹 el-menu -->
               <h2>选择人物</h2>
+              <el-input v-model="searchChara" prefix-icon="el-icon-search" placeholder="搜索人物" @input="filterChara()"></el-input>
               <div class="left_menu" style="height: 100vh;max-height: 500px">
                 <el-menu default-active="1" class="el-menu-vertical-demo">
-                  <el-menu-item v-for="chara in charas" :key="chara" @click="selectChara(chara)">
+                  <el-menu-item v-for="chara in filteredCharas" :key="chara" @click="selectChara(chara)">
                     {{ chara }}
                   </el-menu-item>
                 </el-menu>
@@ -100,6 +101,8 @@ export default {
           timestamp:'2024-11-1',
         },
       ],
+      searchChara:'',
+      filteredCharas:[],
     };
   },
   mounted() {
@@ -107,7 +110,7 @@ export default {
     this.chart.on('click', this.handleNodeClick);
     this.updateChart(this.initQuery);
     this.getCharaName()
-
+    this.filteredCharas=this.charas
   },
   methods: {
     getCharaName(){
@@ -325,6 +328,15 @@ export default {
         default:
           return '#cccccc'; // 默认颜色
       }
+    },
+
+    filterChara(){
+      this.filteredCharas = this.charas.filter(character => {
+        character = character.toLowerCase();
+        let searchQuery = this.searchChara.toLowerCase();
+        let matchesQuery = character.includes(searchQuery)
+        return matchesQuery;
+      });
     },
     getHeight() {
       this.defaultHeight.height = window.innerHeight - 110 + "px";
