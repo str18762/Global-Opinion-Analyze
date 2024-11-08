@@ -56,6 +56,14 @@ public class CharacterController {
     }
 
     //1.5新加在下
+    /**
+     * 选择所有角色
+     *
+     * 根据用户名获取该用户创建的所有角色信息
+     *
+     * @param username 用户名，用于查询角色信息的关键字
+     * @return 返回包含角色信息列表的Result对象
+     */
     @AuthAccess
     @GetMapping("/selectAllChara")
     private Result selectAllChara(String username) {
@@ -63,11 +71,23 @@ public class CharacterController {
         return Result.success(characters);
     }
 
+
+    /**
+     * 处理角色收藏请求的控制器方法
+     * 该方法允许用户收藏特定的角色，通过角色名称和用户名来标识角色和用户
+     *
+     * @param name 角色名称，用于标识需要被收藏的角色
+     * @param username 用户名，用于标识执行收藏操作的用户
+     * @return 返回收藏操作的结果，包括成功或失败的消息
+     */
     @AuthAccess
     @GetMapping("/collectChara")
     private Result collectChara(String name,String username) {
+        // 调用服务层方法，尝试将指定角色添加到用户的收藏列表中
         int row = characterService.addCollect(name,username);
-        if(row>0){
+
+        // 根据添加收藏的操作结果，返回相应的结果消息
+        if(row > 0){
             return Result.success("收藏成功");
         }
         else {
