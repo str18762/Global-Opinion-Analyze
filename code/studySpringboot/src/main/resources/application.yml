@@ -33,4 +33,10 @@ spring:
   data:
     neo4j:
       database: neo4j
+
 ip: localhost
+
+# 百度智能云API
+qianfan:
+  api-key: YYLH4DsJN9GbjiAagAfRQ5l7
+  secret-key: CBPfnvPOOtW9mq1IHpm33NhEB9tYEbQJ
