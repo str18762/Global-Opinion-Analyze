@@ -1,8 +1,8 @@
 const baseURL = '/api'
 const host = process.env.VUE_APP_SERVER_HOST
 
-const register='/user/register'
-const login='/user/login'
+const register='/api/user/register'
+const login='/api/user/login'
 const select_CharaEmotion_Last12Month='/api/emotion/selectAllMonth'
 const select_CharaByName='/api/character/select/'
 const get_Photo='/file/download/'
