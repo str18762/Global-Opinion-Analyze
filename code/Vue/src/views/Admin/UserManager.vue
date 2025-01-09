@@ -33,7 +33,7 @@ export default {
                 type: 'warning'
             }).then(() => {
                 if (userId) {
-                    this.$request.delete("/admin/deleteUser?id="+userId).then(res => {
+                    this.$request.delete("/api/admin/deleteUser?id="+userId).then(res => {
                         if (!res) {
                             this.$message.info("后台未启动！");
                             return;
@@ -46,7 +46,7 @@ export default {
                     })
                 }
                 else {
-                    this.$request.delete(`/admin/batchDeleteUser/${this.ids}`).then(res => {
+                    this.$request.delete(`/api/admin/batchDeleteUser/${this.ids}`).then(res => {
                         if (!res) {
                             this.$message.info("后台未启动！");
                             return;
@@ -77,7 +77,7 @@ export default {
                 userName: this.userName,
             }
 
-            this.$request.get("/admin/listUser", { params: params }).then(res => {
+            this.$request.get("/api/admin/listUser", { params: params }).then(res => {
                 if (!res) {
                     this.$message.info("后台未启动！");
                     return;
@@ -96,7 +96,7 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.$request.patch("/admin/resetPassword?id="+id).then(res => {
+                this.$request.patch("/api/admin/resetPassword?id="+id).then(res => {
                     if (!res) {
                         this.$message.info("后台未启动！");
                         return;

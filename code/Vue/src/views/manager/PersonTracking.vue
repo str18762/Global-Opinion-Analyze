@@ -1,81 +1,136 @@
 <template>
-  <el-container>
-    <el-aside width="200px">
-      <el-menu default-active="1" @select="handleMenuSelect" style="border-radius: 10px;">
-        <el-menu-item index="4" v-if="isListMode">切换至卡片形式</el-menu-item>
-        <el-menu-item index="2" v-else>切换至列表形式</el-menu-item>
-        <el-menu-item index="3">进入影响力分析</el-menu-item>
-      </el-menu>
-    </el-aside>
-    <el-container>
-<!--      头部区域-->
-      <el-header>
-        <div style="width: 100%;display: flex;flex-direction: row-reverse">
-          <el-popover placement="bottom-start" trigger="hover" style="margin-left: 20px;display: flex;align-items: center">
-            点击向管理员申请
-            <div slot="reference" @click="applyForChara()">
-              <el-link :underline="false" >没有人物？</el-link>
-            </div>
-          </el-popover>
-          <el-input placeholder="请输入人物姓名或关键词" v-model="searchQuery"
-                    clearable @clear="handleClear" @input="handleSearch"
-                    style="width: 40%;">
-            <el-select slot="append" v-model="rank_mode" placeholder="默认排序" @change="order" style="width: 120px;">
-              <el-option v-for="item in ranks" :label="item" :value="item" :key="item">
-              </el-option>
-            </el-select>
-          </el-input>
-
-          <el-popover placement="bottom-start" width="300" trigger="hover">
-            <el-row :gutter="10" type="flex" style="flex-wrap:wrap">
-              <el-col :span="12" v-for="(item, index) in fields" :key="index" style="height: 30px">
-                <el-link :underline="false" @click="SwitchField(item)">{{item}} </el-link>
-              </el-col>
-            </el-row>
-            <el-button slot="reference" style="width: 100px">{{selectedCategory}}<i class="el-icon-arrow-down"/></el-button>
-          </el-popover>
-        </div>
-      </el-header>
-<!--      人物卡片-->
-      <el-main v-if="isListMode===false">
+  <div style="display: flex;flex-wrap: nowrap;padding: 20px;">
+    <div style="width: 100%;margin-left: 20px;">
+      <el-card style="width: 100%;background-color: #f2f2f2;padding: 40px;border-radius: 10px;">
+        <!--      头部区域-->
         <div>
-          <div>
-            <el-row :gutter="20" type="flex" style="flex-wrap:wrap">
-              <el-col :span="12" v-for="(character, index) in paginatedChara" :key="index">
-                <el-card class="person-card news-item" v-if="character.username" style="height: 280px">
-                  <div class="card-content">
-                    <div class="info">
-                      <div style="display: flex;flex-wrap: wrap">
-                        <div style="width: 40%;display: flex;flex-wrap: wrap;justify-content: center">
-                          <!--左半部分 头像区域-->
-                          <div style="width: 100%;height: 120px;display: flex;justify-content: center">
-                            <el-avatar :src="character.avatar" :size="120"></el-avatar>
-                          </div>
-                          <div>
-                            <div>
-                              <h3 style="display: flex;justify-content: center">{{ character.name_zh }}</h3>
-                            </div>
-                            <div style="display: flex;justify-content: center">
-                              <button   @click="favor(character)" class="my_button" :style="collect_style(character)">
-                                <span v-if="character.collect">已关注</span>
-                                <span v-else>+关注</span>
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                        <!--有半部分 信息区域-->
-                        <div style="width: 60%" @click="viewDetails(character)">
-                          <p class="custom-cell"><strong>账户名：</strong>{{ character.username_zh }}</p>
-                          <p><strong>地理位置：</strong>{{ character.location_zh }}</p>
-                          <p><strong>正在关注：</strong>{{ character.follow }}</p>
-                          <p><strong>关注者：</strong>{{ character.followers }}</p>
-                          <p><strong>所在领域：</strong>{{ character.field }}</p>
-                        </div>
+          <div style="width: 100%;display: flex;flex-direction: row-reverse">
+            <el-popover placement="bottom-start" trigger="hover" style="margin-left: 20px;display: flex;align-items: center">
+              点击向管理员申请
+              <div slot="reference" @click="applyForChara()">
+                <el-link :underline="false" >没有人物？</el-link>
+              </div>
+            </el-popover>
+            <el-input placeholder="请输入人物姓名或关键词" v-model="searchQuery"
+                      clearable @clear="handleClear" @input="handleSearch"
+                      style="width: 40%;">
+              <el-select slot="append" v-model="rank_mode" placeholder="默认排序" @change="order" style="width: 120px;">
+                <el-option v-for="item in ranks" :label="item" :value="item" :key="item">
+                </el-option>
+              </el-select>
+            </el-input>
 
-                        <div class="custom-cell" style="width: 100%;" @click="viewDetails(character)">
-                          <p><strong>个人简介：</strong>{{ character.introduction_zh }}</p>
+            <el-popover placement="bottom-start" width="300" trigger="hover">
+              <el-row :gutter="10" type="flex" style="flex-wrap:wrap">
+                <el-col :span="12" v-for="(item, index) in fields" :key="index" style="height: 30px">
+                  <el-link :underline="false" @click="SwitchField(item)">{{item}} </el-link>
+                </el-col>
+              </el-row>
+              <el-button slot="reference" style="width: 100px">{{selectedCategory}}<i class="el-icon-arrow-down"/></el-button>
+            </el-popover>
+            <div id="switch_mode" style="width: 40%">
+              <div>
+                <el-button v-if="isListMode" @click="handleModeChange">切换至卡片形式</el-button>
+                <el-button v-else @click="handleModeChange">切换至卡片形式</el-button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--      人物卡片-->
+        <div v-if="isListMode===false">
+          <div>
+            <div>
+              <el-row :gutter="20" type="flex" style="flex-wrap:wrap">
+                <el-col :span="8" v-for="(character, index) in paginatedChara" :key="index">
+                  <el-card class="person-card news-item" v-if="character.username" style="height: 220px">
+                    <div>
+                      <div class="info">
+                        <div style="display: flex;flex-wrap: wrap">
+                          <div style="width: 40%;display: flex;flex-wrap: wrap;justify-content: center">
+                            <!--左半部分 头像区域-->
+                            <div style="width: 100%;height: 120px;display: flex;justify-content: center">
+                              <el-avatar :src="character.avatar" :size="120"></el-avatar>
+                            </div>
+                            <div>
+                              <div>
+                                <h3 style="display: flex;justify-content: center">{{ character.name_zh }}</h3>
+                              </div>
+                              <div style="display: flex;justify-content: center">
+                                <button   @click="favor(character)" class="my_button" :style="collect_style(character)">
+                                  <span v-if="character.collect">已关注</span>
+                                  <span v-else>+关注</span>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                          <!--有半部分 信息区域-->
+                          <div style="width: 60%" @click="viewDetails(character)">
+                            <p class="custom-cell"><strong>账户名：</strong>{{ character.username_zh }}</p>
+                            <p><strong>地理位置：</strong>{{ character.location_zh }}</p>
+                            <p><strong>正在关注：</strong>{{ character.follow }}</p>
+                            <p><strong>关注者：</strong>{{ character.followers }}</p>
+                            <p><strong>所在领域：</strong>{{ character.field }}</p>
+                            <p class="custom-cell" style="margin-top: 20px"><strong>个人简介：</strong>{{ character.introduction_zh }}</p>
+                          </div>
                         </div>
                       </div>
+                    </div>
+                  </el-card>
+                </el-col>
+              </el-row>
+            </div>
+            <div style="padding: 10px 0;display: flex;justify-content: center">
+              <el-pagination
+                  :background="true"
+                  @current-change="handlePageChange"
+                  :current-page="currentPage"
+                  :page-sizes="[5, 10, 15, 20]"
+                  :page-size="pageSize"
+                  layout="total, prev, pager, next, jumper"
+                  :total="filteredCharacters.length">
+              </el-pagination>
+            </div>
+          </div>
+        </div>
+
+        <!--      人物列表-->
+        <div v-if="isListMode===true">
+          <div>
+            <el-row>
+              <el-col :span="24" v-for="(character, index) in paginatedChara" :key="index">
+                <el-card shadow="never">
+                  <div style="display: flex;flex-wrap: wrap;height: 80px">
+                    <div style="width: 60%">
+                      <el-popover placement="right-start" trigger="hover">
+                        <div style="border-radius: 10px;margin: 0">
+                          <div style="display: flex;flex-wrap: wrap">
+                            <div style="margin: 10px"><el-avatar :src="character.avatar" :size="60"></el-avatar></div>
+                            <div><div>
+                              <p><strong>账户名：</strong>{{ character.name_zh }}</p>
+                              <p><strong>正在关注：</strong>{{ character.follow }}</p>
+                              <p><strong>关注者：</strong>{{ character.followers }}</p>
+                            </div></div>
+                          </div>
+                        </div>
+                        <div slot="reference" style="display: inline-block" @click="viewDetails(character)">
+                          <div style="display: flex;flex-wrap: wrap">
+                            <div style="height: 80px;display: flex;justify-content: center;align-items: center;margin:0 10px">
+                              <el-avatar :src="character.avatar" :size="60"></el-avatar>
+                            </div>
+                            <div>
+                              <el-link :underline="false" style="font-size: 20px;margin: 10px">{{character.name_zh}}</el-link>
+                              <div style="margin-left: 20px;font-size: 15px">领域：{{character.field}}</div>
+                            </div>
+                          </div>
+                        </div>
+
+                      </el-popover>
+                    </div>
+                    <div style="width: 40%;display: flex;justify-content: end;align-items: center">
+                      <button   @click="favor(character)" class="my_button" :style="collect_style(character)">
+                        <span v-if="character.collect">已关注</span>
+                        <span v-else>+关注</span>
+                      </button>
                     </div>
                   </div>
                 </el-card>
@@ -88,72 +143,16 @@
                 @current-change="handlePageChange"
                 :current-page="currentPage"
                 :page-sizes="[5, 10, 15, 20]"
-                :page-size="pageSize"
+                :page-size="pageSize2"
                 layout="total, prev, pager, next, jumper"
                 :total="filteredCharacters.length">
             </el-pagination>
           </div>
         </div>
-      </el-main>
+      </el-card>
 
-<!--      人物列表-->
-      <el-main v-if="isListMode===true">
-        <div>
-          <el-row>
-            <el-col :span="24" v-for="(character, index) in paginatedChara" :key="index">
-              <el-card shadow="never">
-                <div style="display: flex;flex-wrap: wrap;height: 80px">
-                  <div style="width: 60%">
-                    <el-popover placement="right-start" trigger="hover">
-                      <div style="border-radius: 10px;margin: 0">
-                        <div style="display: flex;flex-wrap: wrap">
-                          <div style="margin: 10px"><el-avatar :src="character.avatar" :size="60"></el-avatar></div>
-                          <div><div>
-                              <p><strong>账户名：</strong>{{ character.name_zh }}</p>
-                              <p><strong>正在关注：</strong>{{ character.follow }}</p>
-                              <p><strong>关注者：</strong>{{ character.followers }}</p>
-                          </div></div>
-                        </div>
-                      </div>
-                      <div slot="reference" style="display: inline-block" @click="viewDetails(character)">
-                        <div style="display: flex;flex-wrap: wrap">
-                          <div style="height: 80px;display: flex;justify-content: center;align-items: center;margin:0 10px">
-                            <el-avatar :src="character.avatar" :size="60"></el-avatar>
-                          </div>
-                          <div>
-                            <el-link :underline="false" style="font-size: 20px;margin: 10px">{{character.name_zh}}</el-link>
-                            <div style="margin-left: 20px;font-size: 15px">领域：{{character.field}}</div>
-                          </div>
-                        </div>
-                      </div>
-
-                    </el-popover>
-                  </div>
-                  <div style="width: 40%;display: flex;justify-content: end;align-items: center">
-                      <button   @click="favor(character)" class="my_button" :style="collect_style(character)">
-                        <span v-if="character.collect">已关注</span>
-                        <span v-else>+关注</span>
-                      </button>
-                  </div>
-                </div>
-              </el-card>
-            </el-col>
-          </el-row>
-        </div>
-        <div style="padding: 10px 0;display: flex;justify-content: center">
-          <el-pagination
-              :background="true"
-              @current-change="handlePageChange"
-              :current-page="currentPage"
-              :page-sizes="[5, 10, 15, 20]"
-              :page-size="pageSize2"
-              layout="total, prev, pager, next, jumper"
-              :total="filteredCharacters.length">
-          </el-pagination>
-        </div>
-      </el-main>
-    </el-container>
-  </el-container>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -181,7 +180,7 @@ export default {
       rank_mode:'默认排序',
       ranks:['默认排序','粉丝数降序','粉丝数升序'],
       currentPage: 1,
-      pageSize: 16,
+      pageSize: 30,
       pageSize2:30,
       paginatedChara: [],
       isListMode:false,
@@ -213,18 +212,9 @@ export default {
       this.searchQuery = '';
       this.filterCharacters();
     },
-    handleMenuSelect(index) {
-      if(index==='3'){
-        this.$router.push({ path: '/influenceAnalysis' });
-      }
-      else if (index === '2') {
-        this.isListMode = true
-        this.handlePageChange(1)
-      }
-      else if (index === '4'){
-        this.isListMode = false
-        this.handlePageChange(1)
-      }
+    handleModeChange() {
+      this.isListMode = !this.isListMode;
+      this.handlePageChange(1)
     },
     filterCharacters() {
       this.filteredCharacters = this.characters.filter(character => {
@@ -337,13 +327,13 @@ export default {
 .news-item {
   flex: 1 1 calc(33.333% - 20px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
+  padding: 10px;
   background: linear-gradient(135deg, #bdc3c7, #ecf0f1);
   transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
   perspective: 500px;
   cursor: pointer;
   position: relative;
-  margin: 20px 0;
+  margin: 5px 0;
   border-radius: 15px;
   overflow: hidden;
   color: #333;
@@ -352,13 +342,6 @@ export default {
 .news-item:hover {
   transform: perspective(500px) scale(1.07);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-.el-aside {
-  background: linear-gradient(135deg, #bdc3c7, #ecf0f1);
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 15px;
 }
 
 .person-card {
@@ -398,9 +381,7 @@ export default {
   background-color: #f9f9f9;
   padding: 20px;
 }
-.el-menu .el-menu-item {
-  min-width: 160px!important;
-}
+
 
 button {
   outline: none;
@@ -428,7 +409,7 @@ button {
   overflow: hidden; /* 隐藏超出部分 */
   text-overflow: ellipsis; /* 显示省略号 */
   display: -webkit-box; /* 必需 */
-  -webkit-line-clamp: 1; /* 限制在一个块元素显示的文本的行数 */
+  -webkit-line-clamp: 2; /* 限制在一个块元素显示的文本的行数 */
   -webkit-box-orient: vertical; /* 设置或检索伸缩盒对象的子元素的排列方式 */
 }
 

@@ -33,7 +33,7 @@ export default {
                 type: 'warning'
             }).then(() => {
                 if (newWhere) {
-                    this.$request.delete("/admin/deleteNew?where="+newWhere).then(res => {
+                    this.$request.delete("/api/admin/deleteNew?where="+newWhere).then(res => {
                         if (!res) {
                             this.$message.info("后台未启动！");
                             return;
@@ -46,7 +46,7 @@ export default {
                     })
                 }
                 else {
-                    this.$request.delete(`/admin/batchDeleteNew/${this.wheres}`).then(res => {
+                    this.$request.delete(`/api/admin/batchDeleteNew/${this.wheres}`).then(res => {
                         if (!res) {
                             this.$message.info("后台未启动！");
                             return;
@@ -77,7 +77,7 @@ export default {
                 newWhat: this.newWhat,
             }
 
-            this.$request.get("/admin/listNew", { params: params }).then(res => {
+            this.$request.get("/api/admin/listNew", { params: params }).then(res => {
                 if (!res) {
                     this.$message.info("后台未启动！");
                     return;

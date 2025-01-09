@@ -39,7 +39,7 @@ export default {
                 type: 'warning'
             }).then(() => {
                 if (userId) {
-                    this.$request.delete("/admin/deleteInfluence").then(res => {
+                    this.$request.delete("/api/admin/deleteInfluence").then(res => {
                         if (!res) {
                             this.$message.info("后台未启动！");
                             return;
@@ -52,7 +52,7 @@ export default {
                     })
                 }
                 else {
-                    this.$request.delete("/admin/batchDeleteInfluence/${this.ids}").then(res => {
+                    this.$request.delete("/api/admin/batchDeleteInfluence/${this.ids}").then(res => {
                         if (!res) {
                             this.$message.info("后台未启动！");
                             return;
@@ -83,7 +83,7 @@ export default {
                 userName: this.userName,
             }
 
-            this.$request.get("/admin/listInfluence", { params: params }).then(res => {
+            this.$request.get("/api/admin/listInfluence", { params: params }).then(res => {
                 if (!res) {
                     this.$message.info("后台未启动！");
                     return;
@@ -101,7 +101,7 @@ export default {
             this.dialogVisible = true;
         },
         updateuser() {
-            this.$request.post("/admin/updateInfluence",{params:this.userModel}).then(res => {
+            this.$request.post("/api/admin/updateInfluence",{params:this.userModel}).then(res => {
                 if (!res) {
                     this.$message.info("后台未启动！");
                     return;

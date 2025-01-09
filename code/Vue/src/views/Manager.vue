@@ -5,6 +5,7 @@
       <el-header class="header">
         <div class="header-left">
           <strong class="system-title">基于高影响力人物追踪的国际舆论分析系统</strong>
+          <div style="font-size: 14px">International public opinion analysis system based on the tracking of high-influencers</div>
         </div>
         <div class="header-right">
           <div style="display: flex;justify-content: center;align-items: center">
@@ -26,15 +27,18 @@
       </el-header>
 
       <!-- 导航栏 -->
-      <div class="nav-container" style="padding-bottom: 0">
-        <el-menu mode="horizontal" class="nav-menu" @select="handleSelect" :default-active="$route.path">
-          <el-menu-item index="/homePage"><i class="el-icon-house"></i>首页</el-menu-item>
-          <el-menu-item index="/personTracking"><i class="el-icon-user"></i>国际人物</el-menu-item>
-          <el-menu-item index="/correlationAnalysis"><i class="el-icon-connection"></i>关联分析</el-menu-item>
-          <el-menu-item index="/hotTopics"><i class="el-icon-news"></i>热评话题</el-menu-item>
-          <el-menu-item index="/hotPerson"><i class="el-icon-s-data"></i>热评人物</el-menu-item>
-          <el-menu-item index="/helpCenter"><i class="el-icon-question"></i>FAQ</el-menu-item>
-        </el-menu>
+      <div style="position:relative">
+        <div class="nav-container" style="padding-bottom: 0">
+          <el-menu mode="horizontal" class="nav-menu" @select="handleSelect" :default-active="$route.path">
+            <el-menu-item index="/homePage"><i class="el-icon-house"></i>首页</el-menu-item>
+            <el-menu-item index="/personTracking"><i class="el-icon-user"></i>国际人物</el-menu-item>
+            <el-menu-item index="/hotTopics"><i class="el-icon-news"></i>热评话题</el-menu-item>
+            <el-menu-item index="/hotPerson"><i class="el-icon-s-data"></i>热评人物</el-menu-item>
+            <el-menu-item index="/helpCenter"><i class="el-icon-question"></i>FAQ</el-menu-item>
+            <el-menu-item index="/background"><i class="el-icon-question"></i>Background</el-menu-item>
+            <el-menu-item index="/systemProcess"><i class="el-icon-question"></i>SystemProcess</el-menu-item>
+          </el-menu>
+        </div>
       </div>
 
       <!-- 页面内容 -->
@@ -169,17 +173,11 @@ export default {
         case '/homePage':
           router.push('/homePage');
           break;
-        case '/influenceAnalysis':
-          router.push('/influenceAnalysis');
-          break;
         case '/personTracking':
           router.push('/personTracking');
           break;
-        case '/correlationAnalysis':
-          router.push('/correlationAnalysis');
-          break;
         case '/hotTopics':
-          router.push('/hotTopics');
+          router.push('/hotTopics/analysis');
           break;
         case '/hotPerson':
           router.push('/hotPerson');
@@ -189,6 +187,12 @@ export default {
           break;
         case '/helpCenter':
           router.push('/helpCenter');
+          break;
+        case '/background':
+          router.push('/background');
+          break;
+        case '/systemProcess':
+          router.push('/systemProcess');
           break;
         default:
           router.push('/homePage');
@@ -295,11 +299,10 @@ export default {
 body {
   margin: 0;
   padding: 0;
-  background: linear-gradient(135deg, #bdc3c7, #ecf0f1);
 }
 
 .el-container {
-  background: linear-gradient(135deg, #bdc3c7, #ecf0f1);
+  background-image: url("@/assets/Images/sys_bg.png");
 }
 
 .el-main {
@@ -346,7 +349,7 @@ body {
   background: rgba(255, 255, 255, 0.9); /* 半透明白色背景 */
   padding: 10px 0;
   box-shadow: 0 2px 6px rgba(0, 21, 41, 0.35);
-  margin-top: -20px; /* 将导航栏上移，使其与背景图片接上 */
+  margin-top: -10px; /* 将导航栏上移，使其与背景图片接上 */
   clip-path: ellipse(100% 80% at 50% 100%); /* 下方添加椭圆形弧度设计 */
   display: flex;
   justify-content: center;
@@ -354,6 +357,21 @@ body {
   border-bottom-right-radius: 25px; /* 圆角设计 */
   position: relative;
   z-index: 2;
+
+
+  transition: height 0.3s ease; /* 高度变化的过渡效果 */
+  height: 60px; /* 初始高度 */
+  max-height: 80px; /* 最大高度 */
+  min-height: 60px; /* 最小高度 */
+  overflow: hidden; /* 防止内容溢出 */
+}
+
+/* 鼠标悬停时增加高度 */
+.nav-container:hover {
+  height: 80px; /* 悬停时的高度 */
+}
+.el-menu-item:hover {
+  transform: translateY(10px); /* 悬停时向下移动 */
 }
 
 .el-menu {
@@ -367,6 +385,9 @@ body {
   color: #34495e;
   padding: 0 35px;
   border-bottom: none;
+  height: 90px;
+
+  transition: background-color 0.3s ease, transform 0.3s ease; /* 背景色和缩放过渡效果 */
 }
 
 .el-menu-item:hover, .el-menu-item.is-active {

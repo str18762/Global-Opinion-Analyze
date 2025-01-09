@@ -10,7 +10,7 @@ import java.util.List;
 @Mapper
 public interface CharacterMapper {
 
-    @Select("select * from `Characters` ")
+    @Select("select * from `characters` ")
     List<Character> selectAll();
 
     @Select("select * from `presidents_tweets`")
@@ -25,7 +25,7 @@ public interface CharacterMapper {
     @Select("select * from `economisttweets`")
     List<CharaTweet> selectEconomistTweets();
 
-    @Select("select * from `Characters` where field=#{field}")
+    @Select("select * from `characters` where field=#{field}")
     List<Character> selectByField(@Param("field") String field);
 
 

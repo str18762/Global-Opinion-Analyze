@@ -31,8 +31,12 @@ public class QianFanAPI {
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody body = RequestBody.create(mediaType,
                 "{\"messages\":[{\"role\":\"user\",\"content\":\""+formatContent(content)+"\"}]," +
-                        "\"temperature\":0.8,\"top_p\":0.8,\"penalty_score\":1,\"disable_search\":false," +
-                        "\"enable_citation\":false,\"collapsed\":true," +
+                        "\"temperature\":0.8," +
+                        "\"top_p\":0.8," +
+                        "\"penalty_score\":1," +
+                        "\"disable_search\":false," +
+                        "\"enable_citation\":false," +
+                        "\"collapsed\":true," +
                         "\"system\":\"你是一个舆情分析人员，需要根据用户的twitter推文总结出用户关注的时事<可以搜索网络时事进行参考>；" +
                         "以字符串格式给出<只需给出一句话时事概括即可（20字以内）,无需解释，无需多言>；" +
                         "<如果推文无法概括，请回答：“错误”>\"}");
@@ -42,9 +46,20 @@ public class QianFanAPI {
                 .addHeader("Content-Type", "application/json")
                 .build();
         Response response = HTTP_CLIENT.newCall(request).execute();
-        JSONObject jsonObject = new JSONObject(response.body().string());
 
-        return jsonObject.getStr("result");
+        JSONObject jsonObject = null;
+        String result = null;
+        if (response.isSuccessful() && response.body() != null && response.body().string().isEmpty()) {
+            jsonObject = new JSONObject(response.body().string());
+            result = jsonObject.get("result").toString();
+        }
+
+        if (result != null) {
+            if(result.contains("错误") || result.contains("智能语言模型") || result.length() > 25){
+                result= null;
+            }
+        }
+        return result;
     }
 
 
@@ -80,7 +95,7 @@ public class QianFanAPI {
      * @return 格式化后的文本
      */
     private String formatContent(String content){
-        content = content.replace("\"", "\\\"");
+        content = content.replace("\"", "\\\"").replace("\n", "\\n");
         return content;
     }
 }

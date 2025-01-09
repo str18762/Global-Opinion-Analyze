@@ -6,8 +6,8 @@ import message from "element-ui/packages/message"; // 使用 elementUI Message �
 
 // 创建 axios 实例
 const request= axios.create({
-    baseURL: 'http://localhost:7001', // 公共接口
-    timeout: 3000 // 请求超时时间
+    // baseURL: 'http://8.138.186.154:7001', // 公共接口
+    timeout: 5000 // 请求超时时间
 });
 //request.interceptors.request.use(config=>{},error=>{})请求拦截器以及两个参数
 request.interceptors.request.use(

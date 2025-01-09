@@ -1,0 +1,59 @@
+name: Docker Image CI
+
+# 这里仅需要push时执行CI
+on:
+  push:
+    paths:
+      - 'code/studySpringboot/**'
+  # 支持手动触发
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+    # 克隆代码
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    # 设置 JDK 17 环境
+    - name: Set up JDK 17
+      uses: actions/setup-java@v2
+      with:
+        java-version: '17'
+        distribution: 'zulu'
+
+    # 缓存 Maven 依赖
+    - name: Cache Maven dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+
+    # Maven 构建
+    - name: Build with Maven
+      run: mvn clean package -DskipTests
+      working-directory: ./code/studySpringboot/
+
+    # 构建 Docker 镜像
+    - name: Build Docker image
+      run: |
+        docker build -t crpi-reopg2mdo94sr2et.cn-hangzhou.personal.cr.aliyuncs.com/ysh8848/spring:latest .
+      working-directory: ./code/studySpringboot/
+
+    # 登录阿里云 Docker 仓库
+    - name: Alibaba Cloud Container Registry (ACR) Login
+      uses: aliyun/acr-login@v1
+      with:
+          username: HONG_YANG
+          password: ${{ secrets.ALIYUN_PASSWORD }}
+          login-server: crpi-reopg2mdo94sr2et.cn-hangzhou.personal.cr.aliyuncs.com
+        
+    # 推送镜像到阿里云镜像仓库
+    - name: Push Docker image to Aliyun Registry
+      run: |
+        docker push crpi-reopg2mdo94sr2et.cn-hangzhou.personal.cr.aliyuncs.com/ysh8848/spring:latest
+

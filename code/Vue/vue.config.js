@@ -1,12 +1,13 @@
 const { defineConfig } = require('@vue/cli-service')
+
 module.exports = defineConfig({
   transpileDependencies: true,
   devServer: {
-    port: 7000,
+    port: process.env.VUE_APP_SERVER_PORT || 8080,
     open: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:7001',
+        target: process.env.VUE_APP_SERVER_HOST,
         changeOrigin: true,
         pathRewrite: {
           '^/api': ''
@@ -20,5 +21,5 @@ module.exports = defineConfig({
           args[0].title="基于高影响力人物追踪的国际舆论分析系统";
           return args;
         })
-  }
+  },
 })

@@ -18,8 +18,6 @@ const routes = [
       {path: 'homePage',name:'HomePage',component:()=>import('../views/manager/HomePage.vue')},
       {path: 'influenceAnalysis',name:'InfluenceAnalysis',component:()=>import('../views/manager/InfluenceAnalysis.vue')},
       {path: 'personTracking',name:'PersonTracking',component:()=>import('../views/manager/PersonTracking.vue')},
-      {path: 'correlationAnalysis',name:'CorrelationAnalysis',component:()=>import('../views/manager/CorrelationAnalysis.vue')},
-      {path: 'hotPerson',name:'hotPerson',component:()=>import('../views/manager/HotPerson.vue')},
       {path: 'reportGeneration',name:'ReportGeneration',component:()=>import('../views/manager/ReportGeneration.vue')},
       {path: 'helpCenter',name:'HelpCenter',component:()=>import('../views/manager/HelpCenter.vue')},
       {path: '/personTracking/personDetail',name:'PersonDetail',component:()=>import('../views/manager/PersonDetail.vue')},
@@ -27,6 +25,9 @@ const routes = [
       {path: 'news',name:'News',component:()=>import('../views/manager/News.vue')},
       {path: 'news_bbc',name:'News_bbc',component:()=>import('../views/manager/News_BBC.vue')},
       {path: 'snapshot', name: 'SnapshotDetail', component: () => import('../views/manager/Snapshot.vue') },
+      {path: 'background',name:'Background',component:()=>import('../views/manager/Background Introduction.vue')},
+      {path: 'systemProcess',name:'SystemProcess',component:()=>import('../views/manager/SystemProcess.vue')},
+
     ]
   },
   {
@@ -42,8 +43,14 @@ const routes = [
 
     ]
   },
-  {path: '/test', name: 'Test', component: () => import('../views/404.vue') },
-  {path: '/hotTopics', name: 'HotTopics', component:()=>import('../views/manager/HotTopics.vue')},
+  {path: '/test', name: 'Test', component: () => import('../views/Test.vue') },
+  {path: '/hotTopics/analysis', name: 'HotTopicsAnalysis', component:()=>import('../views/manager/HotTopics/Analysis.vue')},
+  {path: '/hotTopics/prediction', name: 'HotTopicsPrediction', component:()=>import('../views/manager/HotTopics/Prediction.vue')},
+  {path: '/hotTopics/forewarn', name: 'HotTopicsForewarn', component:()=>import('../views/manager/HotTopics/Forewarn.vue')},
+  {path: '/hotTopics/spread', name: 'HotTopicsSpread', component:()=>import('../views/manager/HotTopics/Spread.vue')},
+  {path: '/hotPerson',name:'HotPerson',component:()=>import('../views/manager/HotPerson/HotPerson.vue')},
+  {path: '/hotPerson/correlation',name:'HotPersonCorrelation',component:()=>import('../views/manager/HotPerson/Correlation.vue')},
+
   {path: '/*', name:'404',
     component:()=>import("../views/404.vue")},
 ]

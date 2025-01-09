@@ -1,0 +1,55 @@
+name: Node.js CI
+
+on:
+  push:
+    paths:
+    - 'code/Vue/**'
+  # 支持手动触发
+  workflow_dispatch:
+  
+jobs:
+  build:
+
+    runs-on: ubuntu-22.04
+
+    strategy:
+      matrix:
+        node-version: [18.20.5]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+    
+    - name: cache dependencies
+      run: npm install
+      working-directory: ./code/Vue
+      
+    - name: build dist
+      run: npm run build --if-present
+      working-directory: ./code/Vue/
+
+      # 构建 Docker 镜像
+    - name: Build Docker image
+      run: |
+        docker build -t crpi-reopg2mdo94sr2et.cn-hangzhou.personal.cr.aliyuncs.com/ysh8848/vue:latest .
+      working-directory: ./code/Vue/
+
+    # 登录阿里云 Docker 仓库
+    - name: Alibaba Cloud Container Registry (ACR) Login
+      uses: aliyun/acr-login@v1
+      with:
+          username: HONG_YANG
+          password: ${{ secrets.ALIYUN_PASSWORD }}
+          login-server: crpi-reopg2mdo94sr2et.cn-hangzhou.personal.cr.aliyuncs.com
+        
+    # 推送镜像到阿里云镜像仓库
+    - name: Push Docker image to Aliyun Registry
+      run: |
+        docker push crpi-reopg2mdo94sr2et.cn-hangzhou.personal.cr.aliyuncs.com/ysh8848/vue:latest
+      
+    

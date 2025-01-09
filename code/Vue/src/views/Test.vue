@@ -1,62 +1,61 @@
 <template>
   <div class="home-page">
-    <!-- 轮播图 -->
-    <el-carousel height="300px" type="card">
-      <el-carousel-item v-for="(item, index) in carouselItems" :key="index">
-        <img @click="bbc_News(item)" :src="item.img" alt="轮播新闻动态" class="carousel-image">
-        <!-- 显示提示主题 -->
-        <div v-if="item.caption" class="carousel-caption">{{ item.caption }}</div>
-      </el-carousel-item>
-    </el-carousel>
-    <h2>新闻动态</h2>
-    <h2 style="font-size: 18px">News & Updates</h2>
-    <el-divider id="position_divider" content-position="left" style="width: 100%">近期热点</el-divider>
     <div>
       <h2>人物动态</h2>
-      <h2 style="font-size: 18px">Character dynamics</h2>
     </div>
 
-    <div style="display: flex;flex-wrap: wrap">
-      <div style="width: 30%">
+    <div style="display: block;flex-wrap: wrap">
+      <div style="width: 100%">
         <el-card shadow="never" style="border-radius: 10px;margin-top: 20px;height: 80%">
-          <h4>选择人物</h4>
-          <h4 style="font-size: 14px">choose character</h4>
-          <el-divider content-position="left" style="width: 100%">我的关注</el-divider>
-          <div style="height: 80px;overflow: hidden;display: flex;flex-wrap: wrap">
-            <div v-for="(item, index) in collectCharacters" :key="index" shadow="hover" style="height: 80px;width: 25%">
-              <div style="display: flex;align-items: center;justify-content: center" @click="filterCollect(item.name)">
-                <el-avatar :size="60" :src="item.avatar" style="cursor: pointer"></el-avatar>
+          <div style="display: flex;width: 100%;">
+            <div class="left_content" style="width: 30%;">
+              <h4>选择人物</h4>
+              <el-divider content-position="left" style="width: 100%">所有人物</el-divider>
+              <div style="display: flex;flex-wrap: wrap">
+                <el-select v-model="selectedWho" filterable  placeholder="选择人物" @change="filterNews">
+                  <el-option v-for="who in whoList" :key="who" :label="who" :value="who"/>
+                </el-select>
+                <el-button @click="resetFilter">重置过滤</el-button>
               </div>
-              <div style="display: flex;align-items: center;justify-content: center" @click="filterCollect(item.name)">
-                <el-link :underline="false">
-                  {{item.name}}
-                </el-link>
+            </div>
+            <el-divider direction="vertical" style="flex: 1;"></el-divider>
+            <div class="right_content" style="width: 70%;">
+              <el-divider content-position="left" style="width: 100%">我的关注</el-divider>
+              <div style="height: 80px;overflow: hidden;display: flex;flex-wrap: wrap">
+                <div v-for="(item, index) in collectCharacters" :key="index" shadow="hover" style="height: 80px;width: 25%">
+                  <div style="display: flex;align-items: center;justify-content: center" @click="filterCollect(item.name)">
+                    <el-avatar :size="60" :src="item.avatar" style="cursor: pointer"></el-avatar>
+                  </div>
+                  <div style="display: flex;align-items: center;justify-content: center" @click="filterCollect(item.name)">
+                    <el-link :underline="false">
+                      {{item.name}}
+                    </el-link>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-          <el-divider content-position="left" style="width: 100%">所有人物</el-divider>
-          <div style="display: flex;flex-wrap: wrap">
-            <el-select v-model="selectedWho" filterable  placeholder="选择人物" @change="filterNews">
-              <el-option v-for="who in whoList" :key="who" :label="who" :value="who"/>
-            </el-select>
-            <el-button @click="resetFilter">重置过滤</el-button>
-          </div>
-
         </el-card>
       </div>
 
-      <div style="width: 70%;height: 600px">
+      <div style="width: 100%;height: 600px">
         <el-empty v-if="paginatedNews.length===0">
           <el-button type="success" @click="applyForChara()">向管理员反应</el-button>
         </el-empty>
         <div class="news-container">
-          <div class="news-item" v-for="(news, index) in paginatedNews" :key="index">
-            <div style="height: 140px">
-              <h3>{{ news.title_zh }}</h3>
-              <el-link target="_blank" @click="newsDetail(news)">详情</el-link>
-              <div class="reflection"></div>
+          <!-- <transition-group name="slide" tag="div" class="news-item-wrapper"> -->
+          <div class="news-item-wrapper" ref="newsItemWrapper">
+            <div class="page-news" v-for="(page_news,index) in split_list" :key="index" ref="pageNews">
+              <div class="news-item" v-for="(news, index) in page_news" :key="index" ref="newsItem">
+                <div style="height: 140px">
+                  <h3>{{ news.title_zh }}</h3>
+                  <el-link target="_blank" @click="newsDetail(news)">详情</el-link>
+                  <div class="reflection"></div>
+                </div>
+              </div>
             </div>
           </div>
+          <!-- </transition-group> -->
         </div>
         <!-- 分页控件 -->
         <div v-if="isOnePage()" style="padding: 10px 0;display: flex;justify-content: center">
@@ -86,6 +85,12 @@ export default {
   },
   data() {
     return {
+      intervalId: null ,
+      currentIndex: 0,
+      itemWidth: 0, // 单个列表项的宽度
+      wrapperWidth: 0, // 包裹列表项的容器宽度
+      scrollLeftValue: 0, // 记录水平滚动的位置
+      isScrolling: false, // 标记是否正在滚动切换中
       user: JSON.parse(localStorage.getItem('user_logined') || '{}'),
       collectCharacters:[
         {
@@ -94,12 +99,13 @@ export default {
         }
       ],
       newsList: [],
+      split_list:[],
       filteredNews: [],
       paginatedNews: [],
       whoList: [],
       selectedWho: '',
       currentPage: 1,
-      pageSize: 9,
+      pageSize: 8,
       carouselItems: [
         {
           id:2,
@@ -130,8 +136,8 @@ export default {
   },
   created() {
     this.fetchNews();
-    this.getCollectCharacters();
-    this.getBBCNews()
+    // this.getCollectCharacters();
+    // this.getBBCNews()
   },
   methods: {
     getBBCNews(){
@@ -164,6 +170,9 @@ export default {
       axios.get('/api/news/all')
           .then(response => {
             this.newsList = response.data;
+            for (let i = 0; i < this.newsList.length; i += this.pageSize) {
+              this.split_list.push(this.newsList.slice(i, i + this.pageSize));
+            }
             this.filteredNews = this.newsList;
             this.whoList = [...new Set(this.newsList.map(news => news.name))];
             this.updatePagination(); // 初始化分页
@@ -193,6 +202,12 @@ export default {
       const start = (this.currentPage - 1) * this.pageSize;
       const end = start + this.pageSize;
       this.paginatedNews = this.filteredNews.slice(start, end);
+      this.split_list = []
+      for (let i = 0; i < this.filteredNews.length; i += this.pageSize) {
+        this.split_list.push(this.filteredNews.slice(i, i + this.pageSize));
+      }
+      this.currentIndex = this.currentPage - 1
+      this.slideToIndex(this.currentIndex)
     },
     handlePageChange(page) {
       this.currentPage = page;
@@ -219,46 +234,48 @@ export default {
           bbc_newsId: item.id
         }
       });
-    }
+    },
+    startAutoSlide() {
+      this.intervalId = setInterval(() => {
+        this.currentIndex++;
+        console.log(this.split_list.length)
+        if (this.currentIndex >= this.split_list.length) {
+          this.currentIndex = 0;
+        }
+        this.slideToIndex(this.currentIndex);
+      }, 3000); // 每3秒切换一次
+    },
+    slideToIndex(index) {
+      const container = this.$refs.newsItemWrapper;
+      container.style.transform = `translateX(-${index * (this.itemWidth+40)}px)`;
+      this.currentPage = index + 1
+    },
   },
   mounted() {
-    const newsItems = document.querySelectorAll('.news-item');
-    newsItems.forEach(item => {
-      item.addEventListener('mousemove', this.move);
-      item.addEventListener('mouseleave', this.leave);
-      item.addEventListener('mouseover', this.over);
-    });
-  }
+    this.itemWidth = this.$refs.newsItemWrapper.offsetWidth;
+    this.startAutoSlide();
+    // const newsItems = document.querySelectorAll('.news-item');
+    // newsItems.forEach(item => {
+    //   item.addEventListener('mousemove', this.move);
+    //   item.addEventListener('mouseleave', this.leave);
+    //   item.addEventListener('mouseover', this.over);
+    // });
+  },
+  beforeDestroy() {
+    this.stopAutoScroll(); // 在组件销毁前停止自动滚动，避免内存泄漏等问题
+  },
 };
 </script>
 
 <style scoped>
 .home-page {
   padding: 20px;
+  background: linear-gradient(135deg, #bdc3c7, #ecf0f1);
   min-height: 100vh;
 }
 
-
-.carousel-image {
-  width: 100%;
-  height: 300px;
-  object-fit: cover;
-  border-radius: 15px;
-}
-
-.carousel-caption {
-  position: absolute;
-  bottom: 20px; /* 这里可以调整为 0px 使其靠近正下方 */
-  left: 20px; /* 调整为 center 或 right 来改变位置 */
-  color: white;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-  font-size: 1.2rem;
-  background-color: rgba(0, 0, 0, 0.5); /* 背景色提高可读性 */
-  padding: 5px 10px;
-  border-radius: 5px;
-}
-
 h2 {
+  margin-bottom: 20px;
   text-align: center;
 }
 
@@ -279,16 +296,36 @@ h2 {
 
 .news-container {
   display: flex;
-  flex-wrap: wrap;
+  /* flex-wrap: wrap; */
   gap: 20px;
   padding: 0 20px;
+  overflow: hidden; /* 隐藏超出部分，实现滑动效果 */
+  position: relative;
+}
+
+.news-item-wrapper {
+  display: flex;
+  white-space: nowrap; /* 保证内部元素在一行显示，便于水平滚动 */
+  transition: transform 0.5s ease-in-out; /* 用于平滑的滑动切换动画 */
+  gap: 40px;
+  width: 100%;
+  position: relative;
+  /* overflow: hidden; 隐藏超出部分，实现滑动效果 */
+}
+.page-news {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  flex: 1 0 calc(100%);
 }
 
 .news-item {
-  flex: 1 1 calc(33.333% - 20px);
+  flex: 0 0 calc(25% - 20px);
+  max-height: calc(50% - 50px);
+  /* flex-shrink: 0; 避免列表项被压缩 */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  background-image: url("@/assets/Images/card_bg.png");
+  background: linear-gradient(315deg, #7f8c8d, #bdc3c7); /* 从右下到左上的灰色渐变 */
   transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
   perspective: 500px;
   cursor: pointer;
@@ -340,6 +377,38 @@ h2 {
   border-radius: 15px;
 }
 
+.el-divider--vertical{
+  height: 8em;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%); /* 从右边滑入，起始位置在屏幕外左侧 */
+  }
+  to {
+    transform: translateX(0); /* 滑入到正常显示位置 */
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0); /* 从正常显示位置开始 */
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%); /* 滑出到屏幕外左侧 */
+    opacity: 0; /* 可以添加透明度变化，让动画更自然，逐渐消失 */
+  }
+}
+
+.slide-enter-active {
+  animation: slideIn 2s ease-in-out forwards; /* 应用滑入动画，且保持最后一帧状态 */
+}
+
+.slide-leave-active {
+  animation: slideOut 2s ease-in-out forwards; /* 应用滑出动画，并保持最后一帧状态 */
+}
+
 /deep/ .el-pagination {
   padding: 10px;
   border-radius: 20px;
@@ -349,4 +418,6 @@ h2 {
 /deep/ #position_divider .el-divider__text{
   background-color: #bdc3c7;
 }
+
+
 </style>

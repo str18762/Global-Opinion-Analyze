@@ -8,7 +8,7 @@ import '@/assets/css/global.css';
 import '@/assets/css/iconfont/iconfont.css';
 
 import axios from 'axios'
-axios.defaults.baseURL='http://localhost:7001';  //设置一个类似base_url的请求路径
+axios.defaults.baseURL=global_variable.baseURL;  //设置一个类似base_url的请求路径
 global.axios=axios;  //设置一个全局axios便于调用
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 

@@ -34,7 +34,7 @@ export default {
                 type: 'warning'
             }).then(() => {
                 if (extraEmotion) {
-                    this.$request.delete("/admin/deleteExtraEmotion",{params:extraEmotion}).then(res => {
+                    this.$request.delete("/api/admin/deleteExtraEmotion",{params:extraEmotion}).then(res => {
                         if (!res) {
                             this.$message.info("后台未启动！");
                             return;
@@ -51,7 +51,7 @@ export default {
                         this.$message.error('请至少选择一条情感!')
                         return
                     }
-                    this.$request.post(`/admin/batchDeleteExtraEmotion`,this.selectedExtraEmotion).then(res => {
+                    this.$request.post(`/api/admin/batchDeleteExtraEmotion`,this.selectedExtraEmotion).then(res => {
                         if (!res) {
                             this.$message.info("后台未启动！");
                             return;
@@ -84,7 +84,7 @@ export default {
                 name:this.name,
             }
 
-            this.$request.get("/admin/listExtraEmotion", { params: params }).then(res => {
+            this.$request.get("/api/admin/listExtraEmotion", { params: params }).then(res => {
                 if (!res) {
                     this.$message.info("后台未启动！");
                     return;

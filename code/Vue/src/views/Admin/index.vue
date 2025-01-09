@@ -137,7 +137,7 @@ export default {
       })
     },
     getCharaByEmotion(){
-      this.$request.get("/character/selectCharaByEmotion?emotion=正面情感").then(res=>{
+      this.$request.get("/api/character/selectCharaByEmotion?emotion=正面情感").then(res=>{
         if (!res) {
           this.$message.info("后台未启动！");
           return;
@@ -152,7 +152,7 @@ export default {
         }
       })
 
-      this.$request.get("/character/selectCharaByEmotion?emotion=中性情感").then(res=>{
+      this.$request.get("/api/character/selectCharaByEmotion?emotion=中性情感").then(res=>{
         if (!res) {
           this.$message.info("后台未启动！");
           return;
@@ -164,7 +164,7 @@ export default {
         }
       })
 
-      this.$request.get("/character/selectCharaByEmotion?emotion=负面情感").then(res=>{
+      this.$request.get("/api/character/selectCharaByEmotion?emotion=负面情感").then(res=>{
         if (!res) {
           this.$message.info("后台未启动！");
           return;
@@ -191,7 +191,7 @@ export default {
 
     async requestFieldChara(index) {
       return new Promise(resolve => {
-        this.$request.get("/character/selectByField" + "?field=" + this.fields[index]).then(res => {
+        this.$request.get("/api/character/selectByField" + "?field=" + this.fields[index]).then(res => {
           if (!res) {
             this.$message.info("后台未启动！");
             return;
