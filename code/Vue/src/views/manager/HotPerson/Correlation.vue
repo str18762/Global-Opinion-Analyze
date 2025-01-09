@@ -157,7 +157,7 @@ export default {
     },
     async runCypherQuery (query,params){
       const driver = neo4j.driver(
-          'bolt://localhost:7687',
+          process.env.VUE_APP_NEO4J_URI,
           neo4j.auth.basic('neo4j','12345678')
       );
       const session = driver.session()
@@ -381,6 +381,7 @@ export default {
           break;
         case 'explain':
           console.log("解释")
+          // TODO:
           break;
         default:
           console.log("未知操作")

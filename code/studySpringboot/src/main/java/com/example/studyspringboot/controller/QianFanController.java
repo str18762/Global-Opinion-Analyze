@@ -17,12 +17,22 @@ public class QianFanController {
     private final QianFanService qianFanService;
 
     /**
-     * 处理请求
+     * 主题分析
      * @param content 请求推文内容
      * @return 处理结果
      */
     @GetMapping("/process")
     public Result process(String content) throws IOException {
         return Result.success("200", "success", qianFanService.process(content));
+    }
+
+    /**
+     * 关系抽取
+     * @param content 请求推文内容
+     * @return 关系抽取结果
+     */
+    @GetMapping("/relation")
+    public Result relation(String content) throws IOException {
+        return Result.success("200", "success", qianFanService.relation(content));
     }
 }

@@ -30,7 +30,6 @@ public class ExampleCommandLineRunner implements CommandLineRunner {
         this.driver = driver;
         this.applicationContext = applicationContext;
         this.session = driver.session();
-
     }
 
     @Override

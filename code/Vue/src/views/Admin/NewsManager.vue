@@ -120,7 +120,7 @@ export default {
             <el-table-column label="新闻相关人" property="who"></el-table-column>
             <el-table-column label="新闻内容" property="what"></el-table-column>
             <el-table-column label="新闻地址" property="where"></el-table-column>
-            <el-table-column label="操作" width="200" fixed="right">
+            <el-table-column label="操作" width="300px" fixed="right">
                 <template #default="{ row }">
                     <el-button icon="el-icon-delete" round plain type="danger" @click="handleDelete(row.where)">删除</el-button>
                     <el-button icon="el-icon-share" plain type="primary" round><a :href="row.where">详情</a></el-button>

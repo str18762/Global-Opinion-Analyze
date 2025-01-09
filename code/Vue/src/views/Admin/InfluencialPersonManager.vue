@@ -154,7 +154,7 @@ export default {
             <el-table-column label="高影响力人物关注人数" property="follow"></el-table-column>
             <el-table-column label="高影响力人物粉丝数" property="followers"></el-table-column>
             <el-table-column label="高影响力人物所属分类" property="field"></el-table-column>
-            <el-table-column label="操作" width="200" fixed="right">
+            <el-table-column label="操作" width="300" fixed="right">
                 <template #default="{ row }">
                     <el-button icon="el-icon-edit" round plain type="primary" @click="showDialog(row)">编辑</el-button>
                     <el-button icon="el-icon-delete" round plain type="danger"

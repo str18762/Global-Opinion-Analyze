@@ -9,4 +9,10 @@ spring:
     resources:
       static-locations: file:/root/app/
 
+logging:
+  level:
+    sql: info
+    web: debug
+    root: info
+
 ip: mysql
