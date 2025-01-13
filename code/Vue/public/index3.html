@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<title></title>
+
+<link rel="stylesheet" href="/css/style.css" type="text/css" />
+
+</head>
+
+<body>
+
+<div class="bodyCon07">
+	<div class="teacher">
+		<div class="teacherPic">
+			<div class="content" id="sirendingzhi1">
+				<div class="txt">
+					<h3>嫦娥六号任务取得圆满成功</h3>
+					<h4>被国际航天界誉为深空探测领域的"中国奇迹"，展现中国科研实力。</h4>
+					<p>美国航天局（NASA）官员评价：“嫦娥计划进一步巩固了中国在月球探索中的领导地位。”<br>
+						欧空局（ESA）表示希望深化与中国的合作，共同推进深空探索。</p>
+				</div>
+			</div>
+			<div class="content" id="sirendingzhi2">
+				<div class="txt">
+					<h3>我国首艘超深水大洋钻探船“梦想”号交付入列</h3>
+					<h4>被誉为海洋资源开发的"技术奇迹"，大幅提升深海资源勘探能力。</h4>
+					<p>联合国教科文组织海洋科学委员会评价：“梦想号的问世代表了深海技术的革命性突破。”<br>
+						美国《科学》杂志称其为“对未来能源开发格局的重大挑战”。</p>
+				</div>
+			</div>
+			<div class="content" id="sirendingzhi3">
+				<div class="txt">
+					<h3>超越经典计算机的量子模拟器</h3>
+					<h4>被视为量子计算领域的里程碑，推动全球计算能力革新。</h4>
+					<p>谷歌量子计算团队表示：“中国在量子技术上展示了卓越的创新能力。”<br>
+						英国《自然》杂志评价：“这是一项可能改变未来科技的成就。”</p>
+				</div>
+			</div>
+			<div class="content" id="sirendingzhi4">
+				<div class="txt">
+					<h3>新一代气象超算系统建成</h3>
+					<h4>为全球气象预报提供更高精度的数据支持，被认为是全球气象学界的重要贡献。</h4>
+					<p>世界气象组织（WMO）秘书长评价：“这一系统将显著提升全球极端天气的预报能力。”<br>
+						《华尔街日报》称其为“应对气候变化的重要技术工具”。</p>
+				</div>
+			</div>
+			<div class="content" id="sirendingzhi5">
+				<div class="txt">
+					<h3>Q系列人形机器人集体亮相</h3>
+					<h4>展现了人工智能与机器人技术的最新突破，被誉为“未来制造业的支柱”。</h4>
+					<p>美国麻省理工学院（MIT）研究团队称：“中国机器人技术的进步令人印象深刻。”<br>
+						德国《焦点》周刊称其为“引领全球工业自动化的先锋”。</p>
+				</div>
+			</div>
+		</div>
+		
+		<div style="clear:both;"></div>
+		
+	</div>
+</div>
+
+
+ <!--java开始-->
+<script type="text/javascript" src="/js/jquery.js"></script>
+<script type="text/javascript">
+	$(".content").hover(function() {
+		const parentHeight = $(this).parent().height(); // 动态获取父级高度
+		$(this).children(".txt").stop().animate({ height: parentHeight * 0.4 }, 200); // 动态调整为父级的 30%
+		$(this).parent(".teacherPic").css({
+			"background": "url(images/" + $(this).attr("id") + ".jpg) no-repeat center center",
+			"background-size": "cover",
+			"-webkit-transition": "all 0.8s ease 0.2s",
+			"transition": "all 0.8s ease 0.2s"
+		});
+		$(this).find(".txt h3").stop().animate({ paddingTop: "0px" }, 550);
+		$(this).find(".txt p").stop().show();
+	}, function() {
+		const parentHeight = $(this).parent().height(); // 动态获取父级高度
+		$(this).children(".txt").stop().animate({ height: parentHeight * 0.3 }, 200); // 恢复到 20%
+		$(this).find(".txt h3").stop().animate({ paddingTop: "0px" }, 550);
+		$(this).find(".txt p").stop().hide();
+	});
+
+</script>
+<!--java结束-->
+
+
+
+
+</body>
+</html>

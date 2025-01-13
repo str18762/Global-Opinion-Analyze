@@ -23,4 +23,7 @@ public interface NewsMapper {
 
     @Select("SELECT * from `bbc_news`")
     List<News_bbc> getAllBBCNews();
+
+    @Select("SELECT * from `bbc_news` where relativity=#{relativity}")
+    List<News_bbc> selectBBCNewsByRelativity(String relativity);
 }

@@ -13,8 +13,9 @@ const routes = [
     path: '/',
     name: 'Manager',
     component:() => import("../views/Manager.vue"),
-    redirect:'/homePage',
+    redirect:'/realHomePage',
     children:[
+      {path: 'realHomePage',name:'ManagerIndex',component:()=>import('../views/manager/Index.vue')},
       {path: 'homePage',name:'HomePage',component:()=>import('../views/manager/HomePage.vue')},
       {path: 'influenceAnalysis',name:'InfluenceAnalysis',component:()=>import('../views/manager/InfluenceAnalysis.vue')},
       {path: 'personTracking',name:'PersonTracking',component:()=>import('../views/manager/PersonTracking.vue')},
@@ -27,7 +28,6 @@ const routes = [
       {path: 'snapshot', name: 'SnapshotDetail', component: () => import('../views/manager/Snapshot.vue') },
       {path: 'background',name:'Background',component:()=>import('../views/manager/Background Introduction.vue')},
       {path: 'systemProcess',name:'SystemProcess',component:()=>import('../views/manager/SystemProcess.vue')},
-
     ]
   },
   {

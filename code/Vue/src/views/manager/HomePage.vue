@@ -8,17 +8,15 @@
         <div v-if="item.caption" class="carousel-caption">{{ item.caption }}</div>
       </el-carousel-item>
     </el-carousel>
-    <h2>新闻动态</h2>
-    <h2 style="font-size: 18px">News & Updates</h2>
     <el-divider id="position_divider" content-position="left" style="width: 100%">近期热点</el-divider>
     <div>
       <h2>人物动态</h2>
       <h2 style="font-size: 18px">Character dynamics</h2>
     </div>
 
-    <div style="display: flex;flex-wrap: wrap">
-      <div style="width: 30%">
-        <el-card shadow="never" style="border-radius: 10px;margin-top: 20px;height: 80%">
+    <div style="display: flex;flex-wrap: wrap;">
+      <div style="width: 30%" >
+        <el-card shadow="never" style="border-radius: 10px;margin-top: 20px;height: 80%" class="aoe">
           <h4>选择人物</h4>
           <h4 style="font-size: 14px">choose character</h4>
           <el-divider content-position="left" style="width: 100%">我的关注</el-divider>
@@ -52,8 +50,8 @@
         <div class="news-container">
           <div class="news-item" v-for="(news, index) in paginatedNews" :key="index">
             <div style="height: 140px">
-              <h3>{{ news.title_zh }}</h3>
-              <el-link target="_blank" @click="newsDetail(news)">详情</el-link>
+              <h3 style="height: 90px;overflow: hidden">{{ news.title_zh }}</h3>
+              <el-link target="_blank" @click="newsDetail(news)" class="detail">详情</el-link>
               <div class="reflection"></div>
             </div>
           </div>
@@ -135,7 +133,7 @@ export default {
   },
   methods: {
     getBBCNews(){
-      this.$request.get(this.Global.select_allBBCNews).then(res=>{
+      this.$request.get(this.Global.select_BBCNewsByRelativity+"?relativity=首页").then(res=>{
         if (!res) {
           this.$message.info("后台未启动！");
           return;
@@ -233,6 +231,11 @@ export default {
 </script>
 
 <style scoped>
+.aoe{
+  background-image: url("@/assets/Images/7DB12A5D7CF536CB23C8636FE90D59E8.png");
+  border: 3px solid #32789b56;
+  box-shadow: 0 0 8px rgba(18, 91, 237, 0.772);
+}
 .home-page {
   padding: 20px;
   min-height: 100vh;
@@ -288,20 +291,46 @@ h2 {
   flex: 1 1 calc(33.333% - 20px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  background-image: url("@/assets/Images/card_bg.png");
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  background-image: url("@/assets/Images/7DB12A5D7CF536CB23C8636FE90D59E8.png");
+  /* background-color: #ffffff5e; */
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background 0.3s ease;
   perspective: 500px;
   cursor: pointer;
   position: relative;
   margin: 20px 0;
+  border: 3px solid #32789b56;
+  box-shadow: 0 0 8px rgba(18, 91, 237, 0.772);
   border-radius: 15px;
   overflow: hidden;
-  color: #fff;
+  color: #ffffff;
+}
+
+
+@keyframes gradientAnimation {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: 0;
+    transform-origin: left bottom; /* 设置渐变起始点为左下 */
+  }
+  100% {
+    width: 100%;
+    height: 100%;
+    opacity: 1;
+    transform-origin: left bottom; /* 保持起始点为左下 */
+  }
 }
 
 .news-item:hover {
   transform: perspective(500px) scale(1.07);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* #87CEEB,   rgba(135, 206, 235, 0.5)  rgba(255, 182, 193, 0.5)*/
+  background-image: url("@/assets/Images/b3873592bda13095f63b6b2d84b5428c.jpg");
+  /* background: linear-gradient(to top right, rgba(100, 149, 237, 0.5), #D3D3D3); */
+  /* opacity: 0;
+  width: 0;
+  height: 0; */
+  /* animation: gradientAnimation 2s ease-out;
+  animation-fill-mode: forwards;  */
 }
 
 
@@ -322,10 +351,14 @@ h2 {
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
 }
 
-.news-item el-link {
-  color: #ffd700;
+.news-item .detail {
+  color: #fff;
   font-weight: bold;
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+.news-item .detail :hover{
+  color: rgb(0, 102, 255);
 }
 
 .reflection {

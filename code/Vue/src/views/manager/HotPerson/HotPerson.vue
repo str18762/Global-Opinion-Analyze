@@ -5,11 +5,11 @@
       <div style="flex: 1;height: 100%">
         <div style="height: 60%">
           <dv-border-box-9 class="dv_content">
-            <div style="height: 50%;width: 100%">
-              <h2>列表滚动人物相关新闻</h2>
-            </div>
-            <div style="height: 50%;width: 100%">
-              <h2>公众对事件情感分析</h2>
+            <div style="height: 100%;width: 100%">
+              <h2>人物3D模型</h2>
+              <div style="height: 100%;width: 100%">
+                <try_vue :modelUrl="threeDName" :key="threeDName"/>
+              </div>
             </div>
           </dv-border-box-9>
         </div>
@@ -39,15 +39,79 @@
               </div>
             </div>
             <div style="width: 100%;height: 50%;display: flex;">
-              <el-button class="trans_button" style="flex: 1">人物影响力分析</el-button>
+              <el-button class="trans_button" style="flex: 1;text-decoration: underline">人物影响力分析</el-button>
               <el-button class="trans_button" style="flex: 1" @click="$router.push('/hotPerson/correlation')">人物社交关系分析</el-button>
-              <el-button class="trans_button" style="flex: 1">？？？</el-button>
             </div>
           </dv-border-box-9>
         </div>
         <div style="height: 80%">
           <dv-border-box-9 class="dv_content">
             <h2>人物影响力分析</h2>
+            <div style="height: 50%;width: 100%">
+              <InfluenceLevel :chartData="influenceData.total.level"/>
+            </div>
+            <div style="height: 30%;width: 100%;display: flex;flex-wrap: nowrap">
+              <div class="influence_popover">
+                <el-popover placement="top-start" width="200" trigger="hover">
+                  <el-card slot="reference" class="popover_card">
+                    <h2 class="popover_card_text" @click="open_description(influenceData.profession_field.description)">人物职业领域得分</h2>
+                    <h2 class="score_num">{{influenceData.profession_field.total_score}}分</h2>
+                  </el-card>
+                  <div>
+                    <h4>职业：{{influenceData.profession_field.profession}}</h4>
+                    <h4>领域：{{influenceData.profession_field.field}}</h4>
+                    <h4>得分： {{ influenceData.profession_field.profession_field_score }}分</h4>
+                    <h4>权威性：{{influenceData.profession_field.authority}}</h4>
+                    <h4>得分： {{influenceData.profession_field.authority_score}}分</h4>
+                  </div>
+                </el-popover>
+              </div>
+              <div class="influence_popover">
+                <el-popover placement="top-start" width="200" trigger="hover">
+                  <el-card slot="reference" class="popover_card">
+                    <h2 class="popover_card_text" @click="open_description(influenceData.public_exposure.description)">人物曝光度得分</h2>
+                    <h2 class="score_num">{{influenceData.public_exposure.total_score}}分</h2>
+                  </el-card>
+                  <div>
+                    <h4>曝光度：{{influenceData.public_exposure.public_exposure}}</h4>
+                    <h4>得分：{{influenceData.public_exposure.public_exposure_score}}分</h4>
+                    <h4>推文活跃度：{{influenceData.public_exposure.tweet_frequency}}</h4>
+                    <h4>得分： {{influenceData.public_exposure.tweet_frequency_score}}分</h4>
+                    <h4>朋友情况：{{influenceData.public_exposure.friendship_situation}}</h4>
+                    <h4>得分： {{influenceData.public_exposure.friendship_situation_score}}分</h4>
+                  </div>
+                </el-popover>
+              </div>
+              <div class="influence_popover">
+                <el-popover placement="top-start" width="200" trigger="hover" content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
+                  <el-card slot="reference" class="popover_card">
+                    <h2 class="popover_card_text" @click="open_description(influenceData.public_opinion.description)">公众认可度得分</h2>
+                    <h2 class="score_num">{{influenceData.public_opinion.total_score}}分</h2>
+                  </el-card>
+                  <div>
+                    <h4>公众好感度：{{influenceData.public_opinion.public_opinion}}</h4>
+                    <h4>得分： {{influenceData.public_opinion.public_opinion_score}}分</h4>
+                    <h4>粉丝数：{{influenceData.public_opinion.follower_count}}</h4>
+                    <h4>得分： {{influenceData.public_opinion.follower_count_score}}分</h4>
+                  </div>
+                </el-popover>
+              </div>
+              <div class="influence_popover">
+                <el-popover placement="top-start" width="200" trigger="hover" content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
+                  <el-card slot="reference" class="popover_card">
+                    <h2 class="popover_card_text" @click="open_description(influenceData.recent_event.description)">近期事件得分</h2>
+                    <h2 class="score_num">{{influenceData.recent_event.total_score}}分</h2>
+                  </el-card>
+                  <div>
+                    <h4 v-for="(item, index) in influenceData.recent_event.recent_event">{{item.event_name}}+{{item.event_score}}</h4>
+                  </div>
+                </el-popover>
+              </div>
+            </div>
+            <div style="position: absolute;top: 10px;left: 10px">
+              <span class="popover_card_text" @click="open_description(influenceData.total.description)">人物影响力分数：</span>
+              <span style="color: red;font-size: 20px;font-weight: bold;cursor: default ">{{influenceData.total.score}}</span>
+            </div>
           </dv-border-box-9>
         </div>
       </div>
@@ -81,46 +145,58 @@
 
 <script>
 
-import CharaEmotionPie from "@/components/echarts/HotPerson/CharaEmotionPie.vue";
-import WordCloud from "@/components/echarts/HotPerson/WordCloud.vue";
+import CharaEmotionPie from "@/components/echarts/HotPersonChart/CharaEmotionPie.vue";
+import WordCloud from "@/components/echarts/HotPersonChart/WordCloud.vue";
+import InfluenceLevel from "@/components/echarts/HotPersonChart/InfluenceLevel.vue";
+import News from "@/components/echarts/HotPersonChart/News.vue";
+import ThreeDModel from "@/components/echarts/HotPersonChart/ThreeDModel.vue";
+
 
 export default {
   name: 'Screen2',
   components: {
     CharaEmotionPie,
     WordCloud,
+    InfluenceLevel,
+    News,
+    try_vue: ThreeDModel,
   },
   data() {
     return {
       options: [
         {
           label:'马斯克',
-          value:'@elonmusk',
+          value:'马斯克',
+          name:'elon_musk'
         },
         {
           label:'奥巴马',
-          value:'@BarackObama',
+          value:'奥巴马',
+          name:'barack_obama'
         },
         {
           label:'莫迪',
-          value:'@narendramodi',
+          value:'莫迪',
+          name:'modi_ji_face_3d_model'
         },
         {
           label:'NASA',
-          value:'@NASA',
+          value:'NASA',
+          name:'NASA'
         },
         {
           label:'比尔盖茨',
-          value:'@BillGates',
+          value:'比尔盖茨',
+          name:'BillGates'
         },
       ],
-      selectedChara:'@elonmusk',
+      selectedChara:'马斯克',
 
       dataset: [
         {
           id: '1',
           name: '@elonmusk',
-          value:'@elonmusk',
+          value:'马斯克',
           tweets:[
             "没有言语可以形容这场灾难。",
             "那些官员应该被关进监狱很长时间。",
@@ -180,11 +256,59 @@ export default {
             {"name": "第一", "value": 0.08},
             {"name": "反对", "value": 0.08}
           ],
+          influenceData: {
+            total: {
+              score: 770,
+              description: "Elon Musk的影响力覆盖科技、媒体和公众认可等多个领域，是一个全球性的影响力人物。Elon Musk是一位在全球范围内具有深远影响力的科技领袖，作为科技公司的CEO，他在科技、电动汽车和太空探索等多个领域展现了卓越的领导力和创新精神，推动了行业的发展和创新。他的见解和成就在国际上广受认可，频繁出现在新闻和社交媒体上，保持了高公众关注度，并通过社交媒体与粉丝保持紧密联系。Elon Musk拥有广泛的高端社交网络，在多个领域发挥影响力，同时在公众中享有极高的好感度，尤其是在科技和环保领域，他的粉丝数超过1亿，显示了他广泛的吸引力和公众认可。近期的火箭发射成功和新项目宣布进一步证明了他在科技和创新领域的持续影响力和领导力。综合来看，Elon Musk的人物影响力总分为770分，这不仅体现了他在科技行业的全面影响力，也反映了他在媒体和公众认可等多个领域的显著地位，使他成为当代最具影响力的全球性人物之一。",
+              level: 0.77,
+            },
+            profession_field: {
+              description: 'Elon Musk在科技、电动汽车和太空探索领域具有深远的影响力，推动了行业的发展和创新。作为科技创新的领军人物，他的见解和成就广受国际认可。综合职业和领域得分，体现其在科技行业的全面影响力。',
+              total_score: 160,
+              profession: '科技公司CEO',
+              field: '科技、电动汽车、太空探索',
+              profession_field_score: 78,
+              authority: '国际知名科技创新领袖',
+              authority_score: 82,
+            },
+            public_exposure: {
+              description: '频繁出现在新闻和社交媒体，保持高公众关注度。社交媒体活动频繁，与粉丝保持紧密联系。拥有广泛的高端社交网络，对多领域有影响力。综合曝光度和社交关系得分，体现其在公众视野中的显著地位。',
+              total_score: 237,
+              public_exposure: '经常被媒体报道',
+              public_exposure_score: 82,
+              tweet_frequency: '高，频繁与粉丝互动',
+              tweet_frequency_score: 80,
+              friendship_situation: '朋友是各领域大佬',
+              friendship_situation_score: 75,
+            },
+            public_opinion: {
+              description: '普遍受到公众的喜爱，特别是在科技和环保领域。拥有庞大的粉丝群体，显示其广泛的吸引力。综合公众好感度和粉丝数得分，体现其在公众中的广泛认可。',
+              total_score: 173,
+              public_opinion: '高，广受科技和环保爱好者喜爱',
+              public_opinion_score: 88,
+              follower_count: '超过1亿',
+              follower_count_score: 85,
+            },
+            recent_event: {
+              description: '近期事件总得分',
+              total_score: 200,
+              recent_event: [
+                {
+                  event_name: '火箭发射回收成功',
+                  event_score: 120,
+                },
+                {
+                  event_name: '新项目宣布',
+                  event_score: 80,
+                },
+              ],
+            },
+          }
         },
         {
           id: '2',
           name:'@BarackObama',
-          value:'@BarackObama',
+          value:'奥巴马',
           tweets:[
             '卡特总统教会了我们什么是充满优雅、尊严、正义和服务的一生。米歇尔和我将我们的思念与祈祷送给卡特家族，以及所有曾爱过并从这位非凡人士身上学到东西的人。',
             '这是我今年最喜欢的歌曲！如果你想换换歌单，快来听听吧——如果你有推荐的歌曲或艺人，告诉我，我一定会去听！',
@@ -245,11 +369,59 @@ export default {
             {"name": "统治者", "value": 0.0625},
             {"name": "之王", "value": 0.0625}
           ],
+          influenceData: {
+            total: {
+              score: 731,
+              description: "Obama的影响力跨越政治、文化和公共政策等多个领域，是一个全球性的影响力人物。Barack Obama，作为前美国总统，在政治和公共政策领域展现了深远的影响力，推动了多项重要改革，其领导和政策在全球范围内受到尊敬。他经常成为新闻焦点，社交媒体活动适中，与公众保持适度互动，拥有广泛的政治和公共领域联系，对多领域有影响力，体现了他在公众视野中的显著地位。Obama普遍受到公众的喜爱和尊敬，拥有超过8000万的粉丝，显示了其广泛的吸引力和在公众中的广泛认可。近期的新书发布和公共演讲等活动进一步证明了他在当前活动和项目中的影响力。综合来看，Barack Obama的人物影响力总分为731分，影响力等级数为73.1，他的影响力跨越政治、文化和公共政策等多个领域，确立了他作为一个全球性的影响力人物的地位。",
+              level: 0.731,
+            },
+            profession_field: {
+              description: 'Obama在政治和公共政策领域具有深远的影响力，推动了多项重要改革。作为前美国总统，他的领导和政策在全球范围内受到尊敬。综合职业和领域得分，体现其在政治行业的全面影响力。',
+              total_score: 160,
+              profession: '前美国总统',
+              field: '政治、公共政策',
+              profession_field_score: 75,
+              authority: '国际尊敬的政治领袖',
+              authority_score: 85,
+            },
+            public_exposure: {
+              description: '作为前总统，他的行为和言论经常成为新闻焦点。社交媒体活动适中，与公众保持适度互动。拥有广泛的政治和公共领域联系，对多领域有影响力。综合曝光度和社交关系得分，体现其在公众视野中的显著地位。',
+              total_score: 221,
+              public_exposure: '经常被媒体报道',
+              public_exposure_score: 81,
+              tweet_frequency: '中，定期发布动态',
+              tweet_frequency_score: 70,
+              friendship_situation: '朋友是政治和公共领域的大佬',
+              friendship_situation_score: 70,
+            },
+            public_opinion: {
+              description: '普遍受到公众的喜爱和尊敬，具有广泛的吸引力。拥有庞大的粉丝群体，显示其广泛的吸引力。综合公众好感度和粉丝数得分，体现其在公众中的广泛认可。',
+              total_score: 165,
+              public_opinion: '高，广受各阶层喜爱',
+              public_opinion_score: 85,
+              follower_count: '超过8000万',
+              follower_count_score: 80,
+            },
+            recent_event: {
+              description: '近期事件的得分体现其在当前活动和项目中的影响力。',
+              total_score: 185,
+              recent_event: [
+                {
+                  event_name: '新书发布',
+                  event_score: 98,
+                },
+                {
+                  event_name: '公共演讲',
+                  event_score: 87,
+                },
+              ],
+            },
+          }
         },
         {
           id: '3',
           name:'@narendramodi',
-          value:'@narendramodi',
+          value:'莫迪',
           tweets:[
             '我向斯里古鲁戈宾德辛格吉（Sri Guru Gobind Singh Ji）在他诞辰纪念日致敬。他的思想激励我们建立一个进步、繁荣和充满同情的社会。',
             '我在斯里古鲁戈宾德辛格吉的诞辰节日（Prakash Utsav）向他致敬。他的思想激励我们建设一个进步、繁荣和充满同情的社会。',
@@ -310,11 +482,59 @@ export default {
             {"name": "领导", "value": 0.13043478260869565},
             {"name": "努力", "value": 0.13043478260869565}
           ],
+          influenceData: {
+            total: {
+              score: 792,
+              description: '莫迪的影响力覆盖政治和国际关系领域，是一个区域性的影响力人物。Narendra Modi，作为印度总理，在政治和国际关系领域具有显著的影响力，他的决策和领导对国家和国际关系产生了重大影响。在职业领域总得分中，他获得了152分，这体现了他在政治行业的全面影响力。Modi经常出现在政治新闻和社交媒体上，保持高公众关注度，社交媒体活动适中，与公众保持适度互动，人物曝光度总得分为214分，显示了他在公众视野中的显著地位。在本国民众中，Modi具有较高的受欢迎程度，拥有超过5000万的粉丝群体，公众认可度总得分为139分，体现了他在公众中的广泛认可。近期推动国家改革和参与国际会议等活动，为Modi增加了287分，这进一步证明了他在当前活动和项目中的影响力。综合各维度得分，Narendra Modi的人物影响力总分为792分，影响力等级数为79.2，他的影响力覆盖政治和国际关系领域，确立了他作为一个区域性的影响力人物的地位。',
+              level: 0.792,
+            },
+            profession_field: {
+              description: 'Modi在政治和国际关系领域具有显著的影响力，推动了多项重要政策。作为印度总理，他的决策和领导对国家和国际关系有重大影响。综合职业和领域得分，体现其在政治行业的全面影响力。',
+              total_score: 152,
+              profession: '政治家，总理',
+              field: '政治、国际关系',
+              profession_field_score: 70,
+              authority: '国家领导人',
+              authority_score: 82,
+            },
+            public_exposure: {
+              description: '经常出现在政治新闻和社交媒体上，保持高公众关注度。社交媒体活动适中，与公众保持适度互动。拥有广泛的政治和国际关系联系，对多领域有影响力。综合曝光度和社交关系得分，体现其在公众视野中的显著地位。',
+              total_score: 214,
+              public_exposure: '高，政治新闻常客',
+              public_exposure_score: 78,
+              tweet_frequency: '中，定期发布政策信息',
+              tweet_frequency_score: 68,
+              friendship_situation: '朋友是政治和国际领域的大佬',
+              friendship_situation_score: 68,
+            },
+            public_opinion: {
+              description: '在本国民众中具有较高的受欢迎程度。拥有庞大的粉丝群体，显示其广泛的吸引力。综合公众好感度和粉丝数得分，体现其在公众中的广泛认可。',
+              total_score: 139,
+              public_opinion: '中，受本国民众支持',
+              public_opinion_score: 72,
+              follower_count: '超过5000万',
+              follower_count_score: 67,
+            },
+            recent_event: {
+              description: '近期事件的得分体现其在当前活动和项目中的影响力。',
+              total_score: 287,
+              recent_event: [
+                {
+                  event_name: '推动国家改革',
+                  event_score: 189,
+                },
+                {
+                  event_name: '国际会议',
+                  event_score: 98,
+                },
+              ],
+            },
+          }
         },
         {
           id: '4',
           name:'@NASA',
-          value:'@NASA',
+          value:'NASA',
           tweets:[
             '我们有一支专家团队，致力于确保我们从其他星球带回的材料不会污染地球——反之亦然。',
             '那就是我们的 @NASAPersevere 探测车！它通过将机器人臂末端摄像头的图像结合在一起来拍摄‘自拍’。',
@@ -374,11 +594,59 @@ export default {
             {"name": "佛罗里达州", "value": 0.06976744186046512},
             {"name": "首次", "value": 0.06976744186046512}
           ],
+          influenceData: {
+            total: {
+              score: 766,
+              description: 'NASA的影响力覆盖科技、教育和国际合作等多个领域，是一个全球性的影响力机构。NASA作为一个国际知名的航天机构，在科技和航天研究与探索领域具有重要的领导地位，其推动人类对太空的探索和权威性广受认可。在职业领域总得分中，NASA获得了173分，这体现了它在航天行业的全面影响力。NASA经常出现在科学新闻和教育节目中，保持高公众关注度，社交媒体活动适中，与公众保持适度互动，人物曝光度总得分为230分，显示了它在公众视野中的显著地位。在科学和教育领域，NASA普遍受到公众的喜爱，拥有超过1亿的粉丝群体，公众认可度总得分为166分，体现了它在公众中的广泛认可。近期的发射成功和新发现等事件，为NASA增加了197分，这进一步证明了它在当前活动和项目中的影响力。综合各维度得分，NASA的人物影响力总分为766分，影响力等级数为76.6，它的影响力覆盖科技、教育和国际合作等多个领域，确立了它作为一个全球性的影响力机构的地位。',
+              level: 0.766,
+            },
+            profession_field: {
+              description: 'NASA在科技和航天领域具有重要的领导地位，推动人类对太空的探索。作为全球航天研究的权威机构，其权威性广受认可。综合职业和领域得分，体现其在航天行业的全面影响力。',
+              total_score: 173,
+              profession: '政府机构，航天研究与探索',
+              field: '科技、航天研究与探索',
+              profession_field_score: 85,
+              authority: '国际知名航天机构',
+              authority_score: 88,
+            },
+            public_exposure: {
+              description: '经常出现在科学新闻和教育节目中，保持高公众关注度。社交媒体活动适中，与公众保持适度互动。拥有广泛的国际科研合作网络，对多领域有影响力。综合曝光度和社交关系得分，体现其在公众视野中的显著地位。',
+              total_score: 230,
+              public_exposure: '高，科学新闻常客',
+              public_exposure_score: 83,
+              tweet_frequency: '中，定期发布科学更新',
+              tweet_frequency_score: 72,
+              friendship_situation: '朋友是国际科研机构',
+              friendship_situation_score: 75,
+            },
+            public_opinion: {
+              description: '普遍受到公众的喜爱，特别是在科学和教育领域。拥有庞大的粉丝群体，显示其广泛的吸引力。综合公众好感度和粉丝数得分，体现其在公众中的广泛认可。',
+              total_score: 166,
+              public_opinion: '高，受科学爱好者喜爱',
+              public_opinion_score: 84,
+              follower_count: '超过1亿',
+              follower_count_score: 82,
+            },
+            recent_event: {
+              description: '近期事件的得分体现其在当前活动和项目中的影响力。',
+              total_score: 197,
+              recent_event: [
+                {
+                  event_name: '发射成功',
+                  event_score: 100,
+                },
+                {
+                  event_name: '新发现',
+                  event_score: 97,
+                },
+              ],
+            },
+          }
         },
         {
           id: '5',
           name:'@BillGates',
-          value:'@BillGates',
+          value:'比尔盖茨',
           tweets:[
             '祝贺特朗普总统和副总统当选人范斯。美国在通过创新和创造力改善美国及全球人民的生活时最强大。我希望我们现在能够共同努力，为每个人创造一个更加光明的未来。',
             '感谢 @AbiyAhmedAli 在我访问埃塞俄比亚期间的热情欢迎。我们的深入讨论让我对埃塞俄比亚的发展进展深受启发，我也很高兴有机会继续支持我们的合作伙伴，跟踪并加速在卫生、农业方面的进展。很高兴再次欢迎 @BillGates 来到 #埃塞俄比亚 #Ethiopia。始终感谢比尔与梅琳达·盖茨基金会 @gatesfoundation 在农业、健康和金融包容性方面对我们工作的巨大支持。今天我们访问了小麦集群生产力和家禽项目。',
@@ -439,26 +707,142 @@ export default {
             {"name": "植物", "value": 0.06818181818181818},
             {"name": "所以", "value": 0.06818181818181818}
           ],
+          influenceData: {
+            total: {
+              score: 789,
+              description: '比尔·盖茨的影响力覆盖科技、慈善和商业领域，是一个全球性的影响力人物。比尔·盖茨作为一名国际知名的科技领袖和慈善家，在科技、慈善和商业领域具有深远的影响力。作为微软公司的创始人，他在职业领域总得分为182分，这体现了他在科技和慈善行业的全面影响力。盖茨经常出现在新闻报道和慈善活动中，保持高公众关注度，社交媒体活动适中，与公众保持适度互动，人物曝光度总得分为238分，显示了他在公众视野中的显著地位。他普遍受到全球公众的尊敬和喜爱，拥有超过5000万的粉丝群体，公众认可度总得分为170分，体现了他在公众中的广泛认可。近期的新慈善项目和科技投资等活动，为盖茨增加了199分，这进一步证明了他在当前活动和项目中的影响力。综合各维度得分，比尔·盖茨的人物影响力总分为789分，影响力等级数为78.9，他的影响力覆盖科技、慈善和商业领域，确立了他作为一个全球性的影响力人物的地位。',
+              level: 0.789,
+            },
+            profession_field: {
+              description: '盖茨在科技、慈善和商业领域具有深远的影响力，推动了全球健康和教育的发展。作为科技界的领军人物和慈善家，他的权威性广受尊敬。综合职业和领域得分，体现其在科技和慈善行业的全面影响力。',
+              total_score: 182,
+              profession: '企业家，慈善家，软件公司创始人',
+              field: '科技、慈善、商业',
+              profession_field_score: 90,
+              authority: '国际知名科技领袖和慈善家',
+              authority_score: 92,
+            },
+            public_exposure: {
+              description: '经常出现在新闻报道和慈善活动中，保持高公众关注度。社交媒体活动适中，与公众保持适度互动。拥有广泛的科技和商业联系，对多领域有影响力。综合曝光度和社交关系得分，体现其在公众视野中的显著地位。',
+              total_score: 238,
+              public_exposure: '高，经常在新闻和慈善活动中出现',
+              public_exposure_score: 84,
+              tweet_frequency: '中，定期分享慈善和科技动态',
+              tweet_frequency_score: 74,
+              friendship_situation: '朋友是科技和商业界大佬',
+              friendship_situation_score: 80,
+            },
+            public_opinion: {
+              description: '普遍受到全球公众的尊敬和喜爱。拥有庞大的粉丝群体，显示其广泛的吸引力。综合公众好感度和粉丝数得分，体现其在公众中的广泛认可。',
+              total_score: 170,
+              public_opinion: '高，受全球公众尊敬和喜爱',
+              public_opinion_score: 86,
+              follower_count: '超过5000万',
+              follower_count_score: 84,
+            },
+            recent_event: {
+              description: '近期事件的得分体现其在当前活动和项目中的影响力。',
+              total_score: 199,
+              recent_event: [
+                {
+                  event_name: '新慈善项目',
+                  event_score: 89,
+                },
+                {
+                  event_name: '科技投资',
+                  event_score: 110,
+                },
+              ],
+            },
+          }
         },
       ],
       wordCloudData:[],
       //anger、disgust、fear、happiness、sadness、surprise
       charaEmotionPieData:[],
       tweets:[],
+      threeDName:"",
+      influenceData: {
+        total: {
+          score: 770,
+          description: 'Elon Musk的影响力覆盖科技、媒体和公众认可等多个领域，是一个全球性的影响力人物。',
+          level: 77,
+        },
+        profession_field: {
+          description: 'Elon Musk在科技、电动汽车和太空探索领域具有深远的影响力，推动了行业的发展和创新。作为科技创新的领军人物，他的见解和成就广受国际认可。综合职业和领域得分，体现其在科技行业的全面影响力。',
+          total_score: 160,
+          profession: '科技公司CEO',
+          field: '科技、电动汽车、太空探索',
+          profession_field_score: 78,
+          authority: '国际知名科技创新领袖',
+          authority_score: 82,
+        },
+        public_exposure: {
+          description: '频繁出现在新闻和社交媒体，保持高公众关注度。社交媒体活动频繁，与粉丝保持紧密联系。拥有广泛的高端社交网络，对多领域有影响力。综合曝光度和社交关系得分，体现其在公众视野中的显著地位。',
+          total_score: 237,
+          public_exposure: '经常被媒体报道',
+          public_exposure_score: 82,
+          tweet_frequency: '高，频繁与粉丝互动',
+          tweet_frequency_score: 80,
+          friendship_situation: '朋友是各领域大佬',
+          friendship_situation_score: 75,
+        },
+        public_opinion: {
+          description: '普遍受到公众的喜爱，特别是在科技和环保领域。拥有庞大的粉丝群体，显示其广泛的吸引力。综合公众好感度和粉丝数得分，体现其在公众中的广泛认可。',
+          total_score: 173,
+          public_opinion: '高，广受科技和环保爱好者喜爱',
+          public_opinion_score: 88,
+          follower_count: '超过1亿',
+          follower_count_score: 85,
+        },
+        recent_event: {
+          description: '近期事件总得分',
+          total_score: 200,
+          recent_event: [
+            {
+              event_name: '火箭发射回收成功',
+              event_score: 120,
+            },
+            {
+              event_name: '新项目宣布',
+              event_score: 80,
+            },
+          ],
+        },
+      }
     }
   },
   mounted() {
     this.getData();
-    this.startScroll();
   },
   methods: {
     getData() {
+      this.$request.get(this.Global.select_BBCNewsByRelativity+'?relativity='+this.selectedChara).then(res=>{
+        if (!res) {
+          this.$message.info("后台未启动！");
+          return;
+        }
+        if (res.code === '200') {
+          this.newsData=res.data;
+        } else {
+          this.$message.error(res.msg);
+        }
+      })
+
       this.charaEmotionPieData = this.dataset.filter(item => item.value === this.selectedChara)[0].emotion;
       this.tweets = this.dataset.filter(item => item.value === this.selectedChara)[0].tweets; // 获取推文
       this.wordCloudData = this.dataset.filter(item => item.value === this.selectedChara)[0].wordCloudData; // 获取词云数据
+      this.influenceData = this.dataset.filter(item => item.value === this.selectedChara)[0].influenceData; // 获取影响力等级数据
+      this.threeDName = this.options.filter(item => item.value === this.selectedChara)[0].name; // 获取3D模型名称
     },
     changeEvent(){
       this.getData(this.selectedEvent)
+    },
+    open_description(description) {
+      const h = this.$createElement;
+      this.$notify({
+        message: h('i', { style: 'color: teal'}, description)
+      });
     },
   }
 }
@@ -525,4 +909,28 @@ h2 {
     transform: translateY(-70%);
   }
 }
+
+.influence_popover{
+  flex: 1;
+  height: 100%;
+  margin: 5px;
+}
+.popover_card{
+  height: 100%;
+  transition: transform 0.3s ease;
+  background-image: url("@/assets/Images/influence_score_bg.png");
+}
+.popover_card:hover {
+  transform: translateY(-10px); /* 鼠标悬浮时向上浮动10px */
+}
+
+.score_num{
+  color: red;
+}
+
+.popover_card_text:hover{
+  color: darkorange;
+  cursor: pointer;
+}
+
 </style>

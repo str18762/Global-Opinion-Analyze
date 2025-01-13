@@ -6,9 +6,7 @@
 package com.example.studyspringboot.service;
 
 import com.example.studyspringboot.entity.Student;
-import com.example.studyspringboot.exception.ServiceException;
 import com.example.studyspringboot.mapper.StudentMapper;
-import com.example.studyspringboot.utils.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

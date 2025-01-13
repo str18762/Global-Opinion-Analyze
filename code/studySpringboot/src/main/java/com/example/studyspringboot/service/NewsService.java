@@ -30,4 +30,8 @@ public class NewsService {
     public List<News_bbc> getAllBBCNews() {
         return newsMapper.getAllBBCNews();
     }
+
+    public List<News_bbc> selectBBCNewsByRelativity(String relativity) {
+        return newsMapper.selectBBCNewsByRelativity(relativity);
+    }
 }

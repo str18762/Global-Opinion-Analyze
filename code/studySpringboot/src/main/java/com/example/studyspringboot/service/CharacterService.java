@@ -5,8 +5,10 @@
  */
 package com.example.studyspringboot.service;
 
-import com.example.studyspringboot.entity.*;
+import com.example.studyspringboot.entity.CharaTweet;
 import com.example.studyspringboot.entity.Character;
+import com.example.studyspringboot.entity.DataVO;
+import com.example.studyspringboot.entity.InfluenceVO;
 import com.example.studyspringboot.mapper.CharacterMapper;
 import com.example.studyspringboot.mapper.UserMapper;
 import org.apache.commons.lang3.StringUtils;
@@ -162,5 +164,9 @@ public class CharacterService {
 
     public List<Character> selectCharaByEmotion(String emotion) {
         return characterMapper.selectCharaByEmotion(emotion);
+    }
+
+    public Character selectCharaByUsername(String username) {
+        return characterMapper.selectCharaByUsername(username);
     }
 }

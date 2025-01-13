@@ -10,7 +10,7 @@ import java.util.List;
 @Mapper
 public interface CharacterMapper {
 
-    @Select("select * from `characters` ")
+    @Select("select * from `celebrity` ")
     List<Character> selectAll();
 
     @Select("select * from `presidents_tweets`")
@@ -51,4 +51,6 @@ public interface CharacterMapper {
     List<Character> selectCharaByEmotion(@Param("emotion") String emotion);
 
 
+    @Select("select * from celebrity where username=#{username}")
+    Character selectCharaByUsername(@Param("username") String username);
 }

@@ -20,7 +20,7 @@
             </el-table-column>
             <el-table-column label="管理员邮箱" property="email"></el-table-column>
             <el-table-column label="管理员手机" property="phone"></el-table-column>
-            <el-table-column label="操作" width="240" fixed="right">
+            <el-table-column label="操作" width="300" fixed="right">
                 <template #default="{ row }">
                     <el-button icon="el-icon-delete" round  type="danger" @click="handleDelete(row.id)">删除</el-button>
                     <el-button plain type="primary" round @click="resetPassword(row.id)">重置密码</el-button>

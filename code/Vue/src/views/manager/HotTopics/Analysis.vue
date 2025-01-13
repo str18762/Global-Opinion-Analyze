@@ -62,7 +62,29 @@
                 <el-button class="trans_button" style="flex: 1;text-decoration: underline" @click="$router.push('/hotTopics/analysis')" >舆情分析</el-button>
                 <el-button class="trans_button" style="flex: 1" @click="$router.push('/hotTopics/prediction')">舆情预测</el-button>
                 <el-button class="trans_button" style="flex: 1" @click="$router.push('/hotTopics/forewarn')">舆情预警</el-button>
-                <el-button class="trans_button" style="flex: 1;color: orangered" @click="$router.push('/hotTopics/spread')">中国特色传播</el-button>
+                <el-dropdown class="trans_button" style="flex: 1; color: orangered;">
+                  <span style="width: 100%;height: 100%;display: flex;align-items: center;justify-content: center">
+                    中国特色传播
+                    <i class="el-icon-arrow-down"></i>
+                  </span>
+                  <el-dropdown-menu slot="dropdown" class="custom-dropdown-menu">
+                    <el-dropdown-item>
+                      <div class="custom-item" @click="goToIndex3" >科技</div>
+                    </el-dropdown-item>
+                    <el-dropdown-item>
+                      <div @click="goToIndex3" >文化</div>
+                    </el-dropdown-item>
+                    <el-dropdown-item>
+                      <div @click="goToIndex3" >医疗</div>
+                    </el-dropdown-item>
+                    <el-dropdown-item>
+                      <div @click="goToIndex3" >教育</div>
+                    </el-dropdown-item>
+                    <el-dropdown-item>
+                      <div @click="goToIndex3" >军事</div>
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
               </div>
             </div>
           </div>
@@ -70,8 +92,22 @@
           <div style="height: 30%;padding: 5px">
             <div class="box">
               <h2>舆情事件相关新闻</h2>
-              <div style="height: 100%">
-
+              <div style="height: 80%;display: flex;flex-wrap: nowrap">
+                <div style="height: 100%;width: auto">
+                  <img :src="newsData[currentIndex].img" style="height: 100%"/>
+                </div>
+                <div style="height: 100%;width: 100%">
+                  <div class="emotion_inner_name" @click="newsDetail(newsData[currentIndex])">
+                    {{newsData[currentIndex].caption}}
+                  </div>
+                  <div style="text-align: right">
+                    --{{newsData[currentIndex].source}}
+                  </div>
+                  <div style="text-align: center;position: absolute;bottom: 20px;right: 20px">
+                    <button @click="news_prev" :disabled="currentIndex === 0"><i class="el-icon-caret-left"/>上一个</button>
+                    <button @click="news_next" :disabled="currentIndex === newsData.length - 1">下一个<i class="el-icon-caret-right" /></button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -126,9 +162,9 @@
 
 <script>
 import * as echarts from "echarts";
-import EmotionPie from "@/components/echarts/HotTopics/EmotionPie.vue";
-import LineChange from "@/components/echarts/HotTopics/LineChange.vue";
-import WordCloud from "@/components/echarts/HotTopics/WordCloud.vue";
+import EmotionPie from "@/components/echarts/HotTopicsChart/EmotionPie.vue";
+import LineChange from "@/components/echarts/HotTopicsChart/LineChange.vue";
+import WordCloud from "@/components/echarts/HotTopicsChart/WordCloud.vue";
 
 export default {
   name: 'HotTopicsAnalysis',
@@ -139,48 +175,19 @@ export default {
   },
   data() {
     return {
-      koiParams :{
-        // 定时任务对象
-        timer: {
-          // 时间
-          dateTimer: null,
-          // 适应浏览器
-          koiTimer: null,
-          // Loading定时器
-          loadingTimer: null
-        },
-        // 时间参数对象
-        dateParams: {
-          dateDay: null,
-          dateYear: null,
-          dateWeek: null
-        },
-        screen: {
-          // 获取浏览器可视区域高度（包含滚动条）、
-          // 获取浏览器可视区域高度（不包含工具栏高度）、
-          // 获取body的实际高度  (三个都是相同，兼容性不同的浏览器而设置的)
-          screenHeight: window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight,
-          screenWidth: window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
-        },
-        height: {
-          YHLeftOne: null,
-          YHLeftTwo: null,
-          YHCenterOne: null,
-          YHCenterTwo: null,
-          YHCenterThree: null,
-          YHRightOne: null,
-          YHRightTwo: null,
-          YHRightThree: null
-        }
-      },
-
-
       datas:[],
       pieData:[],
       gaugeData:[],
       lineData:[],
       lineTime:[],
       wordCloudData:[],
+      newsData:[
+        {
+          id:null,
+          img:null,
+        },
+      ],
+      currentIndex:0,
 
       selectedEvent:'美国大选',
       options: [
@@ -189,16 +196,16 @@ export default {
           value:'美国大选',
         },
         {
-          label:'韩国总统尹锡悦被捕',
-          value:'韩国总统尹锡悦被捕',
+          label:'韩国总统尹锡悦被逮捕',
+          value:'韩国总统尹锡悦被逮捕',
         },
         {
           label:'以色列空袭黎巴嫩',
           value:'以色列空袭黎巴嫩',
         },
         {
-          label:'spaceX完成首次“筷子夹火箭”',
-          value:'spaceX完成首次“筷子夹火箭”',
+          label:'SpaceX完成首次“筷子夹火箭”',
+          value:'SpaceX完成首次“筷子夹火箭”',
         },
         {
           label:'法国四换总理',
@@ -212,37 +219,31 @@ export default {
     }
   },
   mounted() {
-    // 页面大小改变时触发
-    window.addEventListener('resize',this.getScreenHeight, false);
-    // 页面大小改变时触发
-    window.addEventListener('resize',this.getScreenWidth, false);
-
-
     this.getData(this.selectedEvent);
     this.drawChart()
   },
   methods: {
-    // 获取浏览器高度进行自适应
-    getScreenHeight(){
-      let screenHeight = this.koiParams.screen.screenHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-      // 四舍五入取整数
-      this.koiParams.height.YHLeftOne = Math.round(screenHeight * 0.46);
-      this.koiParams.height.YHLeftTwo = Math.round(screenHeight * 0.46);
-      this.koiParams.height.YHCenterOne= Math.round(screenHeight * 0.18);
-      this.koiParams.height.YHCenterTwo = Math.round(screenHeight * 0.37);
-      this.koiParams.height.YHCenterThree = Math.round(screenHeight * 0.37);
-      this.koiParams.height.YHRightOne = Math.round(screenHeight * 0.3);
-      this.koiParams.height.YHRightTwo = Math.round(screenHeight * 0.31);
-      this.koiParams.height.YHRightThree = Math.round(screenHeight * 0.31);
-      // console.log(screenHeight +"-"+ Math.round(percentHThirty) +"-"+ Math.round(percentHForty));
-    },
-    // 字体大小根据宽度自适应
-    getScreenWidth(){
-      const screenWidth = this.koiParams.screen.screenWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-      console.log("hh-"+screenWidth+"-"+this.koiParams.screen.screenHeight);
+    goToIndex3() {
+      console.log('goToIndex3 called');  // 确认是否被调用
+      this.$nextTick(() => {
+        window.location.href = '/index3.html'; // 跳转到 index3.html
+      });
     },
 
     getData(event) {
+      this.currentIndex=0;
+      this.$request.get(this.Global.select_BBCNewsByRelativity+'?relativity='+event).then(res=>{
+        if (!res) {
+          this.$message.info("后台未启动！");
+          return;
+        }
+        if (res.code === '200') {
+          this.newsData=res.data;
+        } else {
+          this.$message.error(res.msg);
+        }
+      })
+
       const eventSentimentData = {
         '美国大选': {
           pieData: [31, 1, 0, 184, 9, 73],
@@ -381,7 +382,7 @@ export default {
             }
           ]
         },
-        '韩国总统尹锡悦被捕': {
+        '韩国总统尹锡悦被逮捕': {
           pieData: [9, 0, 2, 27, 4, 35],
           lineData: [
             ["Jan-24", "Feb-24", "Mar-24", "Apr-24", "May-24", "Jun-24", "Jul-24", "Aug-24", "Sep-24", "Oct-24", "Nov-24", "Dec-24"],
@@ -655,7 +656,7 @@ export default {
             }
           ]
         },
-        'spaceX完成首次“筷子夹火箭”': {
+        'SpaceX完成首次“筷子夹火箭”': {
           pieData: [4, 0, 1, 46, 1, 21],
           lineData:  [
             ["Jan-24", "Feb-24", "Mar-24", "Apr-24", "May-24", "Jun-24", "Jul-24", "Aug-24", "Sep-24", "Oct-24", "Nov-24", "Dec-24"],
@@ -872,19 +873,23 @@ export default {
       console.log("param",param.target.innerText)
       this.selectEmotion=param.target.innerText
     },
+    newsDetail(news) {
+      this.$router.push({
+        path:'/news_bbc',
+        query:{
+          bbc_newsId: news.id
+        }
+      });
+    },
 
-    getActiveTabColor(){
-      if(this.activeTabPane===1){
-        return "red"
+    news_prev(){
+      if (this.currentIndex > 0) {
+        this.currentIndex--;
       }
-      else if(this.activeTabPane===2){
-        return "blue"
-      }
-      else if(this.activeTabPane===3){
-        return "blue"
-      }
-      else {
-        return "white"
+    },
+    news_next(){
+      if (this.currentIndex < this.newsData.length - 1) {
+        this.currentIndex++;
       }
     }
   },
@@ -954,6 +959,17 @@ body {
   color: lightgrey !important;
   opacity: 0.3 !important;
 }
-
-
+/deep/.el-dropdown-menu__item{
+  padding: 0 !important;
+}
+/* 自定义下拉菜单的宽度 */
+.custom-dropdown-menu {
+  min-width: 150px;  /* 设置最小宽度 */
+  width: 150px;      /* 设置固定宽度，也可以调整为适合你的值 */
+  text-align: center;
+  padding: 0;
+}
+.custom-item:hover{
+  background-image: url("@/assets/Images/sys_bg.png");
+}
 </style>

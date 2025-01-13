@@ -5,7 +5,7 @@
         <div style="width: 100%;display: flex;justify-content: center">
           <!--解决了图片有时候加载错误的问题-->
           <el-image v-if="character.avatar !== undefined" :src="character.avatar" lazy
-            style="height: 300px;border-radius: 50%"></el-image>
+                    style="height: 300px;border-radius: 50%"></el-image>
         </div>
         <div style="width: 100%;min-width: 600px">
           <div style="display: flex;flex-wrap: wrap;justify-content: center;align-items: center;margin-bottom: 10px">
@@ -47,17 +47,17 @@
     <div style="width: 100%">
       <el-card shadow="never" style="width: 100%;">
         <div>
-          <h2 style="text-align: center;font-size: 20px">{{ character_name }} 的情感变化图</h2>
-          <EmotionLineChange :xdata="xdata" :ydata="ydata" @xDataHovered="handleXDataHovered" />
-        </div>
-        <div>
           <h2 style="text-align: center;font-size: 20px">{{ character_name }} 对应时间的情感分布图（点击或悬停上方对应节点）</h2>
           <h2 style="text-align: center;font-size: 14px">{{ currentXData }}</h2>
           <div style="height: 300px;width: 100%;">
             <EmotionPie :chartData="pie_data" />
           </div>
-
         </div>
+        <div>
+          <h2 style="text-align: center;font-size: 20px">{{ character_name }} 的情感变化图</h2>
+          <EmotionLineChange :xdata="xdata" :ydata="ydata" @xDataHovered="handleXDataHovered" />
+        </div>
+
         <!--        <div v-if="data===''">-->
         <!--          暂无该人物情感变化数据-->
         <!--          <el-empty>-->
@@ -137,22 +137,24 @@ export default {
   },
   methods: {
     getItemList() {
+      console.log(this.character_name);
+
       this.$request
-        .get('/api/celebrity-tweets/author',{
-          params:{
-            author:this.character_name
-          }
-        })
-        .then(res => {
-          if (!res) {
-            this.$message.info("后台未启动！");
-            return;
-          }
-          if (res.code === '200') {
-            this.itemList = res.data.filter(item => item.description!== ''&&item.description!==null);
-          } else {
-            this.$message.error(res.msg);
-        }})
+          .get('/api/celebrity-tweets/author',{
+            params:{
+              author:this.character_name
+            }
+          })
+          .then(res => {
+            if (!res) {
+              this.$message.info("后台未启动！");
+              return;
+            }
+            if (res.code === '200') {
+              this.itemList = res.data.filter(item => item.description!== ''&&item.description!==null);
+            } else {
+              this.$message.error(res.msg);
+            }})
     },
     getCharaData() {
       this.$request.get(this.Global.select_CharaByName + this.character_name + '?username=' + this.user.username).then(res => {
@@ -270,7 +272,6 @@ export default {
 }
 
 .main_page {
-  background: linear-gradient(135deg, #2c3e50, #ecf0f1);
   min-height: 100vh;
 }
 

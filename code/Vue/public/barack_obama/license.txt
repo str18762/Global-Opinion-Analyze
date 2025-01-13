@@ -1,0 +1,11 @@
+Model Information:
+* title:	Barack Obama
+* source:	https://sketchfab.com/3d-models/barack-obama-b5cb7af4df5e4953ab7b3c7a1ae45a19
+* author:	David Wigforss (https://sketchfab.com/dwigfor)
+
+Model License:
+* license type:	CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)
+* requirements:	Author must be credited. No commercial use.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Barack Obama" (https://sketchfab.com/3d-models/barack-obama-b5cb7af4df5e4953ab7b3c7a1ae45a19) by David Wigforss (https://sketchfab.com/dwigfor) licensed under CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)

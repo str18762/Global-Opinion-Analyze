@@ -1,6 +1,6 @@
 <template>
     <div style="display: flex;justify-content: center;flex-wrap: wrap">
-      <el-card style="width: 60%;margin-top: 20px;">
+      <el-card style="width: 60%">
         欢迎进入后台管理系统
       </el-card>
       <el-card style="width: 80%;margin-top: 20px">

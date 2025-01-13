@@ -1,10 +1,99 @@
 <template>
   <div style="display: flex;flex-wrap: nowrap;padding: 20px;">
-    <div style="width: 100%;margin-left: 20px;">
-      <el-card style="width: 100%;background-color: #f2f2f2;padding: 40px;border-radius: 10px;">
+    <div style="width: 100%;display: flex;flex-wrap: nowrap" >
+      <div style="width: 20%; margin-left: 16px;" class="side-left">
+        <el-card shadow="hover" style="width: 20%; position: fixed;">
+          <div style="padding: 20px;">
+            <!-- 美国 -->
+            <el-progress :stroke-width="15" :percentage="100" :text-inside="true" status="success" style="margin-bottom: 0px;"></el-progress>
+            <div style="display: flex; height: 30px; justify-content: space-between; font-size: 14px;">
+              <h5>美国</h5>
+              <span>121</span>
+            </div>
+
+            <!-- 英国 -->
+            <el-progress :stroke-width="15" :percentage="45" :text-inside="true" status="warning" style="margin-bottom: 0px;"></el-progress>
+            <div style="display: flex; height: 30px; justify-content: space-between; font-size: 14px;">
+              <h5>英国</h5>
+              <span>45</span>
+            </div>
+
+            <!-- 澳大利亚 -->
+            <el-progress :stroke-width="15" :percentage="14" :text-inside="true" style="margin-bottom: 0px;"></el-progress>
+            <div style="display: flex; height: 30px; justify-content: space-between; font-size: 14px;">
+              <h5>澳大利亚</h5>
+              <span>14</span>
+            </div>
+
+            <!-- 法国 -->
+            <el-progress :stroke-width="15" :percentage="7" :text-inside="true" style="margin-bottom: 0px;"></el-progress>
+            <div style="display: flex; height: 30px; justify-content: space-between; font-size: 14px;">
+              <h5>法国</h5>
+              <span>7</span>
+            </div>
+
+            <!-- 加拿大 -->
+            <el-progress :stroke-width="15" :percentage="5" :text-inside="true" status="success" style="margin-bottom: 0px;"></el-progress>
+            <div style="display: flex; height: 30px; justify-content: space-between; font-size: 14px;">
+              <h5>加拿大</h5>
+              <span>5</span>
+            </div>
+
+            <!-- 印度 -->
+            <el-progress :stroke-width="15" :percentage="3" :text-inside="true" style="margin-bottom: 0px;"></el-progress>
+            <div style="display: flex; height: 30px; justify-content: space-between; font-size: 14px;">
+              <h5>印度</h5>
+              <span>3</span>
+            </div>
+
+            <!-- 新增国家：德国 -->
+            <el-progress :stroke-width="15" :percentage="35" :text-inside="true" style="margin-bottom: 0px;"></el-progress>
+            <div style="display: flex; height: 30px; justify-content: space-between; font-size: 14px;">
+              <h5>德国</h5>
+              <span>35</span>
+            </div>
+
+            <!-- 新增国家：日本 -->
+            <el-progress :stroke-width="15" :percentage="50" :text-inside="true" status="success" style="margin-bottom: 0px;"></el-progress>
+            <div style="display: flex; height: 30px; justify-content: space-between; font-size: 14px;">
+              <h5>日本</h5>
+              <span>50</span>
+            </div>
+
+            <!-- 新增国家：俄罗斯 -->
+            <el-progress :stroke-width="15" :percentage="15" :text-inside="true" style="margin-bottom: 0px;"></el-progress>
+            <div style="display: flex; height: 30px; justify-content: space-between; font-size: 14px;">
+              <h5>俄罗斯</h5>
+              <span>15</span>
+            </div>
+
+            <!-- 新增国家：意大利 -->
+            <el-progress :stroke-width="15" :percentage="25" :text-inside="true" status="success" style="margin-bottom: 0px;"></el-progress>
+            <div style="display: flex; height: 30px; justify-content: space-between; font-size: 14px;">
+              <h5>意大利</h5>
+              <span>25</span>
+            </div>
+
+            <!-- 新增国家：西班牙 -->
+            <el-progress :stroke-width="15" :percentage="40" :text-inside="true" status="warning" style="margin-bottom: 0px;"></el-progress>
+            <div style="display: flex; height: 30px; justify-content: space-between; font-size: 14px;">
+              <h5>西班牙</h5>
+              <span>40</span>
+            </div>
+
+            <!-- 新增国家：阿根廷 -->
+            <el-progress :stroke-width="15" :percentage="50" :text-inside="true" status="success" style="margin-bottom: 0px;"></el-progress>
+            <div style="display: flex; height: 30px; justify-content: space-between; font-size: 14px;">
+              <h5>阿根廷</h5>
+              <span>50</span>
+            </div>
+          </div>
+        </el-card>
+      </div>
+      <div style="width: 80%;padding: 40px;border-radius: 10px; " >
         <!--      头部区域-->
         <div>
-          <div style="width: 100%;display: flex;flex-direction: row-reverse">
+          <div style="width: 100%;display: flex;flex-direction: row-reverse" class="aoe">
             <el-popover placement="bottom-start" trigger="hover" style="margin-left: 20px;display: flex;align-items: center">
               点击向管理员申请
               <div slot="reference" @click="applyForChara()">
@@ -36,8 +125,9 @@
             </div>
           </div>
         </div>
+        <br>
         <!--      人物卡片-->
-        <div v-if="isListMode===false">
+        <div v-if="isListMode===false" >
           <div>
             <div>
               <el-row :gutter="20" type="flex" style="flex-wrap:wrap">
@@ -98,8 +188,8 @@
           <div>
             <el-row>
               <el-col :span="24" v-for="(character, index) in paginatedChara" :key="index">
-                <el-card shadow="never">
-                  <div style="display: flex;flex-wrap: wrap;height: 80px">
+                <el-card shadow="never" class="aoe">
+                  <div style="display: flex;flex-wrap: wrap;height: 90px">
                     <div style="width: 60%">
                       <el-popover placement="right-start" trigger="hover">
                         <div style="border-radius: 10px;margin: 0">
@@ -113,17 +203,17 @@
                           </div>
                         </div>
                         <div slot="reference" style="display: inline-block" @click="viewDetails(character)">
-                          <div style="display: flex;flex-wrap: wrap">
+                          <div style="display: flex;flex-wrap: nowrap">
                             <div style="height: 80px;display: flex;justify-content: center;align-items: center;margin:0 10px">
-                              <el-avatar :src="character.avatar" :size="60"></el-avatar>
+                              <el-avatar :src="character.avatar" :size="60" style="cursor: pointer"></el-avatar>
                             </div>
                             <div>
                               <el-link :underline="false" style="font-size: 20px;margin: 10px">{{character.name_zh}}</el-link>
                               <div style="margin-left: 20px;font-size: 15px">领域：{{character.field}}</div>
+                              <div class="custom-cell2" style="margin-left: 20px;font-size: 15px">简介：{{character.introduction_zh}}</div>
                             </div>
                           </div>
                         </div>
-
                       </el-popover>
                     </div>
                     <div style="width: 40%;display: flex;justify-content: end;align-items: center">
@@ -149,8 +239,7 @@
             </el-pagination>
           </div>
         </div>
-      </el-card>
-
+      </div>
     </div>
   </div>
 </template>
@@ -324,6 +413,12 @@ export default {
 </script>
 
 <style scoped>
+.aoe{
+  background-image: url("@/assets/Images/7DB12A5D7CF536CB23C8636FE90D59E8.png");
+  border: 3px solid #32789b56;
+  box-shadow: 0 0 8px rgba(18, 91, 237, 0.772);
+  margin-bottom: 6px;
+}
 .news-item {
   flex: 1 1 calc(33.333% - 20px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -347,6 +442,9 @@ export default {
 .person-card {
   cursor: pointer;
   transition: transform 0.3s;
+  background-image: url("@/assets/Images/7DB12A5D7CF536CB23C8636FE90D59E8.png");
+  border: 3px solid #32789b56;
+  box-shadow: 0 0 8px rgba(18, 91, 237, 0.772);
 }
 .person-card:hover {
   transform: translateY(-5px);
@@ -413,4 +511,11 @@ button {
   -webkit-box-orient: vertical; /* 设置或检索伸缩盒对象的子元素的排列方式 */
 }
 
+.custom-cell2 {
+  overflow: hidden; /* 隐藏超出部分 */
+  text-overflow: ellipsis; /* 显示省略号 */
+  display: -webkit-box; /* 必需 */
+  -webkit-line-clamp: 1; /* 限制在一个块元素显示的文本的行数 */
+  -webkit-box-orient: vertical; /* 设置或检索伸缩盒对象的子元素的排列方式 */
+}
 </style>

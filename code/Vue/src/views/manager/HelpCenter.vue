@@ -1,6 +1,6 @@
 <template>
   <div style="margin:20px 100px">
-    <el-card style="border-radius: 20px">
+    <el-card style="border-radius: 20px;padding: 50px 60px">
       <div style="text-align: center"><strong style="font-size: 35px">《基于高影响力的人物追踪系统》常见问题及解答</strong></div>
       <div style="margin-top: 30px"><strong style="font-size: 25px">1.为什么要开发这样一套系统？</strong></div>
       <div>

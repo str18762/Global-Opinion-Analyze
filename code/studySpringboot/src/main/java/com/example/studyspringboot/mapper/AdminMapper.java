@@ -1,7 +1,7 @@
 package com.example.studyspringboot.mapper;
 
-import com.example.studyspringboot.entity.*;
 import com.example.studyspringboot.entity.Character;
+import com.example.studyspringboot.entity.*;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;

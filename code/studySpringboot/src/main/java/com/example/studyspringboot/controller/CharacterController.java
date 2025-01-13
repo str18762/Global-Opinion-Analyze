@@ -129,4 +129,11 @@ public class CharacterController {
         List<Character> characters = characterService.selectCharaByEmotion(emotion);
         return Result.success(characters);
     }
+
+    @AuthAccess
+    @GetMapping("/selectByUsername/{username}")
+    private Result selectByUsername(@PathVariable("username") String username) {
+        Character character=characterService.selectCharaByUsername(username);
+        return Result.success(character);
+    }
 }

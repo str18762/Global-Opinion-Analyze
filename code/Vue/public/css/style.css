@@ -1,0 +1,52 @@
+@charset "utf-8";
+/**基本格式开始***************/
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.bodyCon07 {
+    width: 100%;
+    height: 100%; /* 占满整个屏幕 */
+    margin: 0 auto;
+    background-size: cover;
+    overflow: hidden;
+}
+
+.bodyCon07 .teacher {
+    width: 100%;
+    height: 100%; /* 占据父级高度 */
+    position: relative;
+    margin: 0 auto;
+    overflow: hidden;
+}
+.bodyCon07 .teacher .teacherPic {
+    width: 100%;
+    height: 100%; /* 改为占据父级的高度 */
+    display: flex; /* 使用 Flex 布局 */
+    background: url(../images/sirendingzhi1.jpg) no-repeat center center;
+    background-size: cover;
+}
+.bodyCon07 .teacher .teacherPic .content {
+    width: 20%; /* 占父级宽度的 20% */
+    height: 100%; /* 高度设置为父级的 100% */
+    position: relative;
+    overflow: hidden;
+}
+.bodyCon07 .teacher .teacherPic .content .txt {
+    width: calc(100% - 24px);
+    height: 20%; /* 初始高度为父级的 20% */
+    background: rgba(18, 21, 44, 0.5);
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    padding: 12px;
+    border-top: 2px solid #FFE000;
+    font-family: 微软雅黑;
+    font-size: 12px;
+}
+.bodyCon07 .teacher .teacherPic .content .txt h3{color:#FFC200;font-size:24px;font-weight:100;margin:10px 0 6px 0;}
+.bodyCon07 .teacher .teacherPic h4{color:#fff;font-size:12px;font-weight:100;height: 40px;}
+.bodyCon07 .teacher .teacherPic .content .txt p{color:#fff;margin-top:15px;padding-top:5px;border-top:1px solid #FFC200;font-family: 微软雅黑;}

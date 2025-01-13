@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>响应式新闻卡片滑块</title>
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <link rel='stylesheet' href='/swiper.min.css'>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .search-container {
+      margin: 1px auto;
+      text-align: center;
+      position: relative; /* 必须为 relative 或 absolute 来支持 z-index */
+      z-index: 10; /* 设置较高的 z-index */
+
+    }
+
+    .search-input {
+      padding: 8px;
+      font-size: 13px;
+      width: 30%;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .search-button {
+      padding: 7px 12px;
+      font-size: 13px;
+      color: #fff;
+      background-color: #007bff;
+      border: none;
+      border-radius: 5px;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+
+    .search-button:hover {
+      background-color: #0056b3;
+    }
+    /* 固定每个卡片的大小 */
+    .news-slider__item {
+      width: 100%;  /* 确保每个滑块宽度填充 */
+      max-width: 398px; /* 每个卡片的最大宽度 */
+      height: 1000px;   /* 固定每个卡片的高度 */
+      margin: 0 10px;  /* 每个卡片之间的间距 */
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .news__txt {
+      height: 50px;
+      overflow: hidden;
+    }
+    .location__txt{
+      margin-top: 0px;
+    }
+    .field__txt{
+      margin-top: 0px;
+    }
+    /* 其他样式保持不变 */
+    .news__img img {
+      width: 100%;
+      height: 200%;
+      object-fit: cover;
+      margin-top: 0px;
+    }
+
+    .news-slider__wrp {
+      display: flex;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+
+<div id="app">
+  <div class="wrapper">
+    <div class="background">
+    </div>
+    <div class="item-bg"></div>
+    <!-- 人物选择框 -->
+    <div class="search-container">
+      <select v-model="selectedWho" @change="filterNews(selectedWho)" class="search-input">
+        <option value="" disabled selected>选择人物</option>
+        <option v-for="who in whoList" :key="who" :value="who">{{ who }}</option>
+      </select>
+    </div>
+
+    <div class="news-slider">
+      <div class="news-slider__ctr">
+        <div class="news-slider__arrows">
+          <button class="news-slider__arrow news-slider-prev" @click="prevPage" :disabled="currentPage <= 1">Prev</button>
+          <button class="news-slider__arrow news-slider-next" @click="nextPage" :disabled="currentPage >= totalPages">Next</button>
+        </div>
+        <div class="swiper-pagination"></div>
+      </div>
+      <div class="news-slider__wrp swiper-wrapper">
+        <div class="news-slider__item swiper-slide" v-for="(character, index) in currentItems" :key="index">
+            <a class="news__item" @click.prevent="viewDetails(character.name_zh)">
+            <div class="news__title">{{ character.name_zh }}</div>
+            <p class="news__txt">{{ character.introduction_zh }}</p>
+            <p class="location__txt">{{ character.location_zh }}</p>
+            <p class="field__txt">{{ character.field }}</p>
+            <div class="news__img">
+              <img :src="character.avatar || 'default-avatar.png'" alt="news">
+            </div>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<svg hidden="hidden">
+  <defs>
+    <symbol id="icon-arrow-left" viewBox="0 0 32 32">
+      <title>arrow-left</title>
+      <path d="M0.704 17.696l9.856 9.856c0.896 0.896 2.432 0.896 3.328 0s0.896-2.432 0-3.328l-5.792-5.856h21.568c1.312 0 2.368-1.056 2.368-2.368s-1.056-2.368-2.368-2.368h-21.568l5.824-5.824c0.896-0.896 0.896-2.432 0-3.328-0.48-0.48-1.088-0.704-1.696-0.704s-1.216 0.224-1.696 0.704l-9.824 9.824c-0.448 0.448-0.704 1.056-0.704 1.696s0.224 1.248 0.704 1.696z"></path>
+    </symbol>
+    <symbol id="icon-arrow-right" viewBox="0 0 32 32">
+      <title>arrow-right</title>
+      <path d="M31.296 14.336l-9.888-9.888c-0.896-0.896-2.432-0.896-3.328 0s-0.896 2.432 0 3.328l5.824 5.856h-21.536c-1.312 0-2.368 1.056-2.368 2.368s1.056 2.368 2.368 2.368h21.568l-5.856 5.824c-0.896 0.896-0.896 2.432 0 3.328 0.48 0.48 1.088 0.704 1.696 0.704s1.216-0.224 1.696-0.704l9.824-9.824c0.448-0.448 0.704-1.056 0.704-1.696s-0.224-1.248-0.704-1.664z"></path>
+    </symbol>
+  </defs>
+</svg>
+
+<script src="https://www.jq22.com/jquery/jquery-3.3.1.js"></script>
+<script src='/swiper.min.js'></script>
+<script src="/script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.min.js"></script>
+<script>
+
+  new Vue({
+    el: '#app',
+    data() {
+      return {
+        paginatedChara: [],  // 存储所有的数据
+        currentPage: 1,      // 当前页码
+        selectedIndex:1,
+        pageSize: 3,         // 每页显示条数
+        totalPages: 0,       // 总页数
+        currentItems: [],    // 当前页显示的条目
+        username: '',
+        characters: [],
+        selectedWho: [],    // 选中的人物
+        whoList: [],        // 人物列表
+        selectedCharacter: {},
+      };
+    },
+    mounted() {
+      this.fetchCharacters();  // 获取人物数据
+      this.fetchWhoList();  // 获取人物列表
+    },
+    methods: {
+        // 跳转到对应网页链接
+        setWebPageUrl(name) {
+            // 定义人物名称与网页链接的映射
+            const webPageMap = {
+                "elonmusk": "https://baike.baidu.com/item/%E5%9F%83%E9%9A%86%C2%B7%E9%A9%AC%E6%96%AF%E5%85%8B?fromtitle=%E9%A9%AC%E6%96%AF%E5%85%8B&fromid=17200149&fromModule=lemma_search-box",
+                "巴拉克 · 奥巴马": "https://baike.baidu.com/item/%E8%B4%9D%E6%8B%89%E5%85%8B%C2%B7%E4%BE%AF%E8%B5%9B%E5%9B%A0%C2%B7%E5%A5%A5%E5%B7%B4%E9%A9%AC/190467?fromtitle=%E5%A5%A5%E5%B7%B4%E9%A9%AC&fromid=3073",
+                "justinbieber": "https://baike.baidu.com/item/%E8%B4%BE%E6%96%AF%E6%B1%80%C2%B7%E6%AF%94%E4%BC%AF?fromtitle=JustinBieber&fromid=11257588&fromModule=lemma_search-box",
+                // 添加更多人物和对应的网页链接
+            };
+
+            // 根据名称获取对应链接
+            return webPageMap[name] || null;
+        },
+
+        // 点击人物卡片时跳转
+        viewDetails(name) {
+            const url = this.setWebPageUrl(name);
+            if (url) {
+                console.log('跳转到:', url); // 日志输出跳转的 URL
+                window.open(url, '_blank'); // 在新标签页中打开链接
+            } else {
+                console.error('未找到该人物对应的链接:', name);
+            }
+        },
+
+      filterNews(selectedWho) {
+            console.log('调用接口前的选中值:', selectedWho);
+
+            fetch(`http://localhost:7001/character/selectByUsername/${encodeURIComponent(selectedWho)}`, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            })
+                    .then((res) => {
+                      if (!res.ok) {
+                        throw new Error('网络响应错误');
+                      }
+                      return res.json();
+                    })
+                    .then((data) => {
+                      console.log('接口返回数据:', data);
+
+                      if (data.code === '200' && data.data) {
+                        const selectedCharacter = data.data; // 接口返回的选中人物
+                        console.log('选中人物数据:', selectedCharacter);
+
+                        // 查找选中人物在 paginatedChara 中的索引
+                        const selectedIndex = this.paginatedChara.findIndex(
+                                (character) => character.id === selectedCharacter.id
+                        );
+
+                        if (selectedIndex !== -1) {
+                          // 计算选中人物所在页码
+                          this.currentPage = Math.floor(selectedIndex / this.pageSize) + 1;
+                          console.log('计算的页码:', this.currentPage);
+
+                          // 更新分页显示
+                          this.updatePagination();
+                        } else {
+                          console.error('选中人物未在 paginatedChara 中找到:', selectedCharacter);
+                        }
+                      } else {
+                        console.error('未找到相关人物数据:', data);
+                      }
+                    })
+                    .catch((error) => {
+                      console.error('请求失败:', error);
+                    });
+          },
+
+      fetchWhoList() {
+        fetch('http://localhost:7001/character/selectAll', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+                .then((res) => {
+                  if (!res.ok) {
+                    throw new Error('网络响应错误');
+                  }
+                  return res.json();
+                })
+                .then((data) => {
+                  if (data.code === '200') {
+                    this.whoList = data.data; // 将人物列表赋值到 whoList
+                    this.whoList = [...new Set(this.whoList.map(character => character.username))];
+                  } else {
+                    this.$message.error(data.msg || '获取人物列表失败！');
+                  }
+                })
+                .catch((error) => {
+                  console.error('请求失败:', error);
+                  this.$message.error('获取人物列表失败，请稍后再试');
+                });
+      },
+      // 获取人物数据
+      fetchCharacters() {
+        fetch('http://localhost:7001/character/selectAll', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+                .then(res => {
+                  if (!res.ok) {
+                    throw new Error('网络响应错误');
+                  }
+                  return res.json();
+                })
+                .then(data => {
+                  if (data.code === '200') {
+                    this.paginatedChara = data.data; // 存储所有数据
+                    this.totalPages = Math.ceil(this.paginatedChara.length / this.pageSize); // 计算总页数
+                    this.updatePagination();  // 更新当前页数据
+                  } else {
+                    this.$message.error(data.msg);
+                  }
+                })
+                .catch(error => {
+                  console.error('请求失败:', error);
+                  this.$message.error('请求失败，请稍后再试');
+                });
+      },
+      updatePagination() {
+        const start = (this.currentPage - 1) * this.pageSize;
+        const end = start + this.pageSize;
+        this.currentItems = this.paginatedChara.slice(start, end);
+
+      },
+
+      // 上一页
+      prevPage() {
+        if (this.currentPage > 1) {
+          this.currentPage--;
+          this.updatePagination(); // 更新当前页数据
+        }
+      },
+
+      // 下一页
+      nextPage() {
+        if (this.currentPage < this.totalPages) {
+          this.currentPage++;
+          this.updatePagination(); // 更新当前页数据
+        }
+      }
+    }
+  });
+
+</script>
+</body>
+</html>
