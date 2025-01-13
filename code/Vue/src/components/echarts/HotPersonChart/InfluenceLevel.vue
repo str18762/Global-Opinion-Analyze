@@ -12,6 +12,10 @@ export default {
       type: Number,
       required: true,
     },
+    name:{
+      type: String,
+      required: true
+    }
   },
   data() {
     return {}
@@ -104,7 +108,7 @@ export default {
             data: [
               {
                 value: this.chartData,
-                name: '影响力等级',
+                name: this.name,
               }
             ]
           }

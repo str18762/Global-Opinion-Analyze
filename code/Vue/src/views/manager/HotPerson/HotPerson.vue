@@ -48,7 +48,7 @@
           <dv-border-box-9 class="dv_content">
             <h2>人物影响力分析</h2>
             <div style="height: 50%;width: 100%">
-              <InfluenceLevel :chartData="influenceData.total.level"/>
+              <InfluenceLevel :chartData="influenceData.total.level" :name="name"/>
             </div>
             <div style="height: 30%;width: 100%;display: flex;flex-wrap: nowrap">
               <div class="influence_popover">
@@ -163,6 +163,7 @@ export default {
   },
   data() {
     return {
+      name: '影响力等级',
       options: [
         {
           label:'马斯克',

@@ -151,7 +151,7 @@ export default {
     async runCypherQuery(query, params) {
       const driver = neo4j.driver(
         process.env.VUE_APP_NEO4J_URI,
-        neo4j.auth.basic('neo4j', '12345678')
+        neo4j.auth.basic(process.env.VUE_APP_NEO4J_USER, process.env.VUE_APP_NEO4J_PASSWORD)
       );
       const session = driver.session()
       try {

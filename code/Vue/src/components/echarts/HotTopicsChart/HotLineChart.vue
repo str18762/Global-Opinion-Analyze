@@ -8,10 +8,21 @@ import * as echarts from "echarts";
 
 export default {
   name: "HotLineChart",
-  data(){
-    return{
-      xData : ["2020", "2021"],
-      colorData : [
+  props: {
+    xData: {
+      type: Array,
+      required: true,
+      default: () => [],
+    },
+    obj: {
+      type: Object,
+      required: false,
+      default: () => { },
+    }
+  },
+  data() {
+    return {
+      colorData: [
         ['#87C53E', '#97D44F'],
         ['#40CDB9', '#2EAE9C'],
         ['#2CB8E6', '#0096C7'],
@@ -25,53 +36,60 @@ export default {
         ['#D2CB04', '#FFF95A'],
         ['#9FE04B', '#CAFF86']
       ],
-      obj : {
-        '1月': [10, 11],
-        '2月': [12, 13],
-        '3月': [8, 10],
-        '4月': [9, 14],
-        '5月': [10, 17],
-        '6月': [9, 13],
-        '7月': [5, 12],
-        '8月': [5, 12],
-        '9月': [5, 12],
-        '10月': [5, 12],
-        '11月': [5, 12],
-        '12月': [5, 12],
-      },
-      testData : [],
-      seriesArr : [],
-      sumValue:[],
+      testData: [],
+      seriesArr: [],
+      sumValue: [],
     }
   },
   mounted() {
     this.drawChart()
   },
   methods: {
-    drawChart(){
+    drawChart() {
       const myEcharts = echarts.init(this.$refs.chart);
 
+      this.testData = []
+      this.seriesArr = []
       for (let item in this.obj) {
         this.testData.push(item)
         this.seriesArr.push(this.obj[item])
       }
-      let lastYear=0;
-      let thisYear=0;
-      this.seriesArr.map((i)=>{
-        lastYear += parseInt(i[0]);
-        thisYear += parseInt(i[1]);
+      let month_list = [];
+      for (let i = 0; i < this.xData.length; i++) {
+        month_list.push(0)
+      }
+      this.seriesArr.map((i) => {
+        for (let index = 0; index < this.xData.length; index++) {
+          month_list[index] += parseInt(i[index])
+        }
       })
-      this.sumValue = [lastYear,thisYear];
+      this.sumValue = month_list
       let option = {
         backgroundColor: "#1a2439", //背景色
         tooltip: {
-          show: false,
+          show: true,
+          trigger: 'axis',
+          confine:true,
+          formatter: function (params) {
+            let res = params[0].name + '<br/>';
+            for (let i = 0; i < params.length / 2; i++) {
+              res += params[i].seriesName + ':' + params[i].value + '<br/>';
+            }
+            return res;
+          }
         },
         textStyle: {
           color: "#C9C9C9",
         },
         color: ["#74AF2E", "#74AF2E", "#2EAE9C", "#0096C7", "#0279CD", "#1949BF", "#1949BF", '#6942B0', '#9B40CA',
           '#E18439', '#DF9A37', '#D2CB04', '#9FE04B', '#9FE04B'
+        ],
+        dataZoom: [
+          {
+            type: 'inside', // 内置型数据区域缩放组件
+            start: 0, // 数据窗口范围的起始百分比
+            end: 100 // 数据窗口范围的结束百分比
+          }
         ],
         legend: {
           type: "scroll",
@@ -145,10 +163,12 @@ export default {
       let barData = [];
       let pictorialBarData = [];
       let countArr = [];
-      let count = 0;
-      let count_1 = 0;
-      let testObj = [];
+      let count_list = [];
+      for (let i = 0; i < this.xData.length; i++) {
+        count_list.push(0);
+      }
       data.map((item, index) => {
+        console.log("index:", index)
         barData.push({
           "name": this.testData[index],
           data: item,
@@ -164,29 +184,31 @@ export default {
               y2: 1,
               type: "linear",
               global: false,
-              colorStops: [{
+              colorStops: [{  // smys
                 offset: 0,
                 color: this.colorData[index][0],
               },
-                {
-                  offset: 1,
-                  color: this.colorData[index][1],
-                },
+              {
+                offset: 1,
+                color: this.colorData[index][1],
+              },
+
               ],
             },
           },
           label: {
             show: true,
-            offset: [55, 0]
+            offset: [55, 0],
           },
           labelLine: {
             show: true,
           }
         });
         countArr = [];
-        count += item[0];
-        count_1 += item[1];
-        countArr.push(count, count_1);
+        for (let idx = 0; idx < this.xData.length; idx++) {
+          count_list[idx] += item[idx]
+        }
+        countArr = count_list;
         pictorialBarData.push({
           data: countArr,
           type: "pictorialBar",
@@ -216,36 +238,39 @@ export default {
         zlevel: 2,
       }];
       barData.unshift(
-          {
-            name: '总数',
-            type: 'bar',
-            barGap: '-100%',         // 左移100%，stack不再与上面两个在一列
-            label: {
-              normal: {
-                show: true,
-                color:'#fff',
-                position: ['18',-25],       //  位置设为top
-                formatter: '{c}',
-                textStyle: { color: '#fff' }
-              }
-            },
-            barWidth: 50,
-            itemStyle: {
-              normal: {
-                color: 'rgba(128, 128, 128, 0.3)'    // 仍为透明
-              }
-            },
-            data: this.sumValue,
-          })
+        {
+          name: '总数',
+          type: 'bar',
+          barGap: '-100%',         // 左移100%，stack不再与上面两个在一列
+          label: {
+            normal: {
+              show: true,
+              color: '#fff',
+              position: ['18', -25],       //  位置设为top
+              formatter: '{c}',
+              textStyle: { color: '#fff' }
+            }
+          },
+          barWidth: 50,
+          itemStyle: {
+            normal: {
+              color: 'rgba(128, 128, 128, 0.3)'    // 仍为透明
+            }
+          },
+          data: this.sumValue,
+        })
       let arr = [...barData, ...btArr, ...pictorialBarData];
       console.log('arr', arr)
       return arr;
     },
 
-  }
+  },
+  watch: {
+    'obj': function (val) {
+      this.drawChart()
+    },
+  },
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

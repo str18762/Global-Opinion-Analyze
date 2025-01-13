@@ -103,9 +103,9 @@
 
           <div style="height: 40%;padding: 5px">
             <div class="box">
-              <h2>舆情事件相关新闻</h2>
+              <h2>事件风险等级</h2>
               <div style="height: 80%">
-                <InfluenceLevel :chartData="level" />
+                <InfluenceLevel :chartData="level" :name="name"/>
               </div>
             </div>
           </div>
@@ -301,6 +301,7 @@ export default {
       HotLineData: [],
       level: 0.75,
       eventRisk: [0.75, 0.80, 0.85, 0.45, 0.67],
+      name: '风险等级',
       alertData: ['2024年9月公众负面情绪较高，其中悲伤情绪占比最高',
         '2024年11月公众负面情绪较高，其中惊讶情绪占比最高',
         '2024年12月公众负面情绪较高，其中厌恶情绪居多',
